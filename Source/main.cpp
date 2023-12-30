@@ -24,6 +24,7 @@
 #include "raylib.h"
 #include "game.h"
 
+// TODO: Remove unnecessary comments
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -35,7 +36,7 @@ int main(void)
     const int screenWidth = 1920;
     const int screenHeight = 1080;
 
-    InitWindow(screenWidth, screenHeight, "SPACE INVADERS");
+    InitWindow(screenWidth, screenHeight, "SPACE INVADERS"); // TODO: Make window into an RAII class
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 
@@ -47,7 +48,7 @@ int main(void)
     
     //--------------------------------------------------------------------------------------
 
-    InitAudioDevice();
+    InitAudioDevice(); // TODO: Remove unused functions and variables, the game isn't using audio at all
 
     auto sound = LoadSound("./hitHurt.ogg");
     

@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 
+// TODO: Remove this entire class, not used anywhere in the application
 
 struct Entity
 {

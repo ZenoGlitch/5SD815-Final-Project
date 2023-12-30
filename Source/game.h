@@ -12,7 +12,7 @@ enum struct State
 	ENDSCREEN
 };
 
-enum struct EntityType
+enum struct EntityType // TODO: Remove this struct, types can be handled with proper use of classes
 {
 	PLAYER,
 	ENEMY,
@@ -26,6 +26,7 @@ struct PlayerData
 	int score;
 };
 
+// TODO: Break out Player into its own class
 struct Player
 {
 public:
@@ -47,7 +48,7 @@ public:
 	
 };
 
-
+// TODO: Break out Projectile into its own class
 struct Projectile
 {
 public: 
@@ -66,6 +67,7 @@ public:
 	void Render(Texture2D texture);
 };
 
+// TODO: Break out Wall into its own class
 struct Wall 
 {
 public: 
@@ -81,6 +83,7 @@ public:
 	void Update(); 
 };
 
+// TODO: Break out Alien into its own class
 struct Alien
 {
 public:
@@ -101,7 +104,7 @@ public:
 	void Render(Texture2D texture); 
 };
 
-
+// TODO: Should star be part of background or should it be its own class?
 struct Star
 {
 	Vector2 initPosition = { 0, 0 };
@@ -112,6 +115,7 @@ struct Star
 	void Render();
 };
 
+// TODO: Break out Background into its own class
 struct Background
 {
 	
@@ -176,7 +180,7 @@ struct Game
 
 	Player player;
 
-	std::vector<Projectile> Projectiles;
+	std::vector<Projectile> Projectiles; // TODO: Separate list of projectiles into two list, one for player, one for alien
 
 	std::vector<Wall> Walls;
 

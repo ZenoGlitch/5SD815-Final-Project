@@ -1,5 +1,5 @@
 #include "Resources.h"
-#include <iostream>;
+#include <iostream>; //TODO: Remove the semicolon, it is a type-o. With warnings is treated as error, this is an error.
 
 void Resources::Load()
 {

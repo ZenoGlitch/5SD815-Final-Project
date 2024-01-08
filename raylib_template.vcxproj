@@ -171,12 +171,14 @@
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\player.cpp" />
+    <ClCompile Include="Source\projectile.cpp" />
     <ClCompile Include="Source\Resources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="level.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\player.h" />
+    <ClInclude Include="Source\projectile.h" />
     <ClInclude Include="Source\Resources.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "Resources.h"
 #include "player.h"
+#include "projectile.h"
 #include <vector>
 #include <string>
 
@@ -50,23 +51,23 @@ struct PlayerData
 //};
 
 // TODO: Break out Projectile into its own class
-struct Projectile
-{
-public: 
-	// INITIALIZE PROJECTILE WHILE DEFINING IF ITS PLAYER OR ENEMY 
-	Vector2 position = {0,0};
-	int speed = 15; 
-	bool active = true;  
-	EntityType type = {};
-
-	// LINE WILL UPDATE WITH POSITION FOR CALCULATIONS
-	Vector2 lineStart = { 0, 0 };
-	Vector2 lineEnd = { 0, 0 };
-
-	void Update();
-
-	void Render(Texture2D texture);
-};
+//struct Projectile
+//{
+//public: 
+//	// INITIALIZE PROJECTILE WHILE DEFINING IF ITS PLAYER OR ENEMY 
+//	Vector2 position = {0,0};
+//	int speed = 15; 
+//	bool active = true;  
+//	EntityType type = {};
+//
+//	// LINE WILL UPDATE WITH POSITION FOR CALCULATIONS
+//	Vector2 lineStart = { 0, 0 };
+//	Vector2 lineEnd = { 0, 0 };
+//
+//	void Update();
+//
+//	void Render(Texture2D texture);
+//};
 
 // TODO: Break out Wall into its own class
 struct Wall 
@@ -181,7 +182,10 @@ struct Game
 
 	Player player;
 
-	std::vector<Projectile> Projectiles; // TODO: Separate list of projectiles into two list, one for player, one for alien
+	/*std::vector<Projectile> Projectiles;*/ // TODO: Separate list of projectiles into two list, one for player, one for alien
+
+	std::vector<Projectile> playerBeams;
+	std::vector<Projectile> enemyBeams;
 
 	std::vector<Wall> Walls;
 

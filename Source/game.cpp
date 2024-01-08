@@ -5,6 +5,10 @@
 #include <thread>
 #include <fstream>
 
+bool is_dead(const auto& entity) noexcept 
+{
+	return !entity.active;
+}
 
 // MATH FUNCTIONS
 float lineLength(Vector2 A, Vector2 B) //Uses pythagoras to calculate the length of a line
@@ -64,7 +68,9 @@ void Game::Start()
 void Game::End()
 {
 	//SAVE SCORE AND UPDATE SCOREBOARD
-	Projectiles.clear();
+	//Projectiles.clear();
+	playerBeams.clear();
+	enemyBeams.clear();
 	Walls.clear();
 	Aliens.clear();
 	newHighScore = CheckNewHighScore();
@@ -92,8 +98,6 @@ void Game::Update()
 		if (IsKeyReleased(KEY_SPACE))
 		{
 			Start();
-
-
 		}
 
 		break;
@@ -133,64 +137,70 @@ void Game::Update()
 
 		// Update background with offset
 		//playerPos = { player.x_pos, (float)player.player_base_height };
-		cornerPos = { 0, (float)player.player_base_height };
+		cornerPos = { 0.0f, player.player_base_height };
 		offset = lineLength(player.position, cornerPos) * -1;
 		background.Update(offset / 15);
 
 
-		//UPDATE PROJECTILE
-		for (int i = 0; i < Projectiles.size(); i++)
+		//UPDATE PROJECTILES
+		//for (int i = 0; i < Projectiles.size(); i++)
+		//{
+		//	Projectiles[i].Update();
+		//}
+
+		for (auto& eBeam : enemyBeams)
 		{
-			Projectiles[i].Update();
+			eBeam.Update();
 		}
-		//UPDATE PROJECTILE
+
+		for (auto& pBeam : playerBeams)
+		{
+			pBeam.Update();
+		}
+
+		//UPDATE WALLS
 		for (int i = 0; i < Walls.size(); i++)
 		{
 			Walls[i].Update();
 		}
 
 		//CHECK ALL COLLISONS HERE
-		for (int i = 0; i < Projectiles.size(); i++)
+		for (auto& enemyBeam : enemyBeams)
 		{
-			if (Projectiles[i].type == EntityType::PLAYER_PROJECTILE)
+			for (auto& wall : Walls)
 			{
-				for (int a = 0; a < Aliens.size(); a++)
+				if (CheckCollisionCircleRec(wall.position, wall.radius, enemyBeam.rect))
 				{
-					if (CheckCollision(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-					{
-						// Kill!
-						std::cout << "Hit! \n";
-						// Set them as inactive, will be killed later
-						Projectiles[i].active = false;
-						Aliens[a].active = false;
-						score += 100;
-					}
+					enemyBeam.active = false;
+					wall.health -= 1;
 				}
 			}
 
-			//ENEMY PROJECTILES HERE
-			
-			if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
+			if (CheckCollisionCircleRec(player.position, player_radius, enemyBeam.rect))
 			{
-				if (CheckCollision(player.position, player_radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				enemyBeam.active = false;
+				player.lives -= 1;
+			}
+		}
+
+		for (auto& playerBeam : playerBeams)
+		{
+			for (auto& wall : Walls)
+			{
+				if (CheckCollisionCircleRec(wall.position, wall.radius, playerBeam.rect))
 				{
-					std::cout << "dead!\n";
-					Projectiles[i].active = false;
-					player.lives -= 1;
+					playerBeam.active = false;
+					wall.health -= 1;
 				}
 			}
-			
 
-
-			for (int b = 0; b < Walls.size(); b++)
+			for (auto& alien : Aliens)
 			{
-				if (CheckCollision(Walls[b].position, static_cast<float>(Walls[b].radius), Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				if (CheckCollisionCircleRec(alien.position, alien.radius, playerBeam.rect))
 				{
-					// Kill!
-					std::cout << "Hit! \n";
-					// Set them as inactive, will be killed later
-					Projectiles[i].active = false;
-					Walls[b].health -= 1;
+					playerBeam.active = false;
+					alien.active = false;
+					score += 100;
 				}
 			}
 		}
@@ -198,13 +208,9 @@ void Game::Update()
 		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			
-			//float window_height = (float)GetScreenHeight();
-			Projectile newProjectile;
-			newProjectile.position.x = player.position.x;
-			newProjectile.position.y = GetScreenHeight() - 130;
-			newProjectile.type = EntityType::PLAYER_PROJECTILE;
-			Projectiles.push_back(newProjectile);
+			const Vector2 spawnPosition{ player.position.x + player_radius / 2,player.position.y - PROJECTILE_HEIGHT };
+			const int speed = 15;
+			playerBeams.push_back(Projectile(spawnPosition, speed));
 		}
 
 		//Aliens Shooting
@@ -218,47 +224,20 @@ void Game::Update()
 				randomAlienIndex = rand() % Aliens.size();
 			}
 
-			Projectile newProjectile;
-			newProjectile.position = Aliens[randomAlienIndex].position;
-			newProjectile.position.y += 40;
-			newProjectile.speed = -15;
-			newProjectile.type = EntityType::ENEMY_PROJECTILE;
-			Projectiles.push_back(newProjectile);
+			Vector2 spawnPosition = Aliens[randomAlienIndex].position;
+			spawnPosition.y += 40;
+			const int speed = -15;
+
+			enemyBeams.push_back(Projectile(spawnPosition, speed));
 			shootTimer = 0;
 		}
 
-		// REMOVE INACTIVE/DEAD ENITITIES
-		for (int i = 0; i < Projectiles.size(); i++)
-		{
-			if (Projectiles[i].active == false)
-			{
-				Projectiles.erase(Projectiles.begin() + i);
-				// Prevent the loop from skipping an instance because of index changes, since all insances after
-				// the killed objects are moved down in index. This is the same for all loops with similar function
-				i--;
-			}
-		}
-		for (int i = 0; i < Aliens.size(); i++)
-		{
-			if (Aliens[i].active == false)
-			{
-				Aliens.erase(Aliens.begin() + i);
-				i--;
-			}
-		}
-		for (int i = 0; i < Walls.size(); i++)
-		{
-			if (Walls[i].active == false)
-			{
-				Walls.erase(Walls.begin() + i);
-				i--;
-			}
-		}
+		std::erase_if(playerBeams, is_dead<Projectile>);
+		std::erase_if(enemyBeams, is_dead<Projectile>);
+		std::erase_if(Aliens, is_dead<Alien>);
+		std::erase_if(Walls, is_dead<Wall>);
+		break;
 
-			
-		
-
-	break;
 	case State::ENDSCREEN:
 		//Code
 	
@@ -367,9 +346,19 @@ void Game::Render()
 		player.Render(resources.shipTextures[player.activeTexture].get());
 
 		//projectile rendering
-		for (int i = 0; i < Projectiles.size(); i++)
+		//for (int i = 0; i < Projectiles.size(); i++)
+		//{
+		//	Projectiles[i].Render(getTexture(resources.laserTexture));
+		//}
+
+		for (auto& eBeam : enemyBeams)
 		{
-			Projectiles[i].Render(getTexture(resources.laserTexture));
+			eBeam.Render(getTexture(resources.laserTexture));
+		}
+
+		for (auto& pBeam : playerBeams)
+		{
+			pBeam.Render(getTexture(resources.laserTexture));
 		}
 
 		// wall rendering 
@@ -694,42 +683,42 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 
 
 
-void Projectile::Update()
-{
-	position.y -= speed;
-
-	// UPDATE LINE POSITION
-	lineStart.y = position.y - 15;
-	lineEnd.y   = position.y + 15;
-
-	lineStart.x = position.x;
-	lineEnd.x   = position.x;
-
-	if (position.y < 0 || position.y > 1500)
-	{
-		active = false;
-	}
-}
-
-void Projectile::Render(Texture2D texture)
-{
-	//DrawCircle((int)position.x, (int)position.y, 10, RED);
-	DrawTexturePro(texture,
-		{
-			0,
-			0,
-			176,
-			176,
-		},
-		{
-			position.x,
-			position.y,
-			50,
-			50,
-		}, { 25 , 25 },
-		0,
-		WHITE);
-}
+//void Projectile::Update()
+//{
+//	position.y -= speed;
+//
+//	// UPDATE LINE POSITION
+//	lineStart.y = position.y - 15;
+//	lineEnd.y   = position.y + 15;
+//
+//	lineStart.x = position.x;
+//	lineEnd.x   = position.x;
+//
+//	if (position.y < 0 || position.y > 1500)
+//	{
+//		active = false;
+//	}
+//}
+//
+//void Projectile::Render(Texture2D texture)
+//{
+//	//DrawCircle((int)position.x, (int)position.y, 10, RED);
+//	DrawTexturePro(texture,
+//		{
+//			0,
+//			0,
+//			176,
+//			176,
+//		},
+//		{
+//			position.x,
+//			position.y,
+//			50,
+//			50,
+//		}, { 25 , 25 },
+//		0,
+//		WHITE);
+//}
 
 void Wall::Render(Texture2D texture)
 {

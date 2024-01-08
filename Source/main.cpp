@@ -25,76 +25,32 @@
 #include "game.h"
 
 // TODO: Remove unnecessary comments
+constexpr int screenWidth = 1920;
+constexpr int screenHeight = 1080;
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
 int main(void)
 {    
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
-
     InitWindow(screenWidth, screenHeight, "SPACE INVADERS"); // TODO: Make window into an RAII class
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);
 
-    Game game = { State::STARTSCREEN };
+    Game game = { State::STARTSCREEN }; // TODO: if gamestate is going to be used, maybe initialize in the constructor?
 
     game.Launch();
 
-    
-    //--------------------------------------------------------------------------------------
-
-    InitAudioDevice(); // TODO: Remove unused functions and variables, the game isn't using audio at all
-
-    auto sound = LoadSound("./hitHurt.ogg");
-    
-
-
-
-    // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
-
-        //if (IsKeyPressed(KEY_SPACE))
-        //{
-        //    PlaySound(sound);
-        //}
-
-        //if (IsKeyPressed(KEY_BACKSPACE))
-        //{
-        //    StopSound(sound);
-        //}
-
         game.Update();
-      
-
-        // Draw
-        //----------------------------------------------------------------------------------
+        
         BeginDrawing();
-
-        ClearBackground(BLACK);
-
-       
+        ClearBackground(BLACK);  
 
         game.Render();
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
-    CloseAudioDevice();
-    
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    CloseWindow();
 
     std::string filename = "level.txt";  
 

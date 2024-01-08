@@ -45,12 +45,6 @@ void Game::Start()
 
 	}
 
-
-	//creating player
-	Player newPlayer;
-	player = newPlayer;
-	player.Initialize();
-
 	//creating aliens
 	SpawnAliens();
 	
@@ -138,9 +132,9 @@ void Game::Update()
 
 
 		// Update background with offset
-		playerPos = { player.x_pos, (float)player.player_base_height };
+		//playerPos = { player.x_pos, (float)player.player_base_height };
 		cornerPos = { 0, (float)player.player_base_height };
-		offset = lineLength(playerPos, cornerPos) * -1;
+		offset = lineLength(player.position, cornerPos) * -1;
 		background.Update(offset / 15);
 
 
@@ -178,7 +172,7 @@ void Game::Update()
 			
 			if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
 			{
-				if (CheckCollision({player.x_pos, GetScreenHeight() - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				if (CheckCollision(player.position, player_radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
 					std::cout << "dead!\n";
 					Projectiles[i].active = false;
@@ -207,7 +201,7 @@ void Game::Update()
 			
 			//float window_height = (float)GetScreenHeight();
 			Projectile newProjectile;
-			newProjectile.position.x = player.x_pos;
+			newProjectile.position.x = player.position.x;
 			newProjectile.position.y = GetScreenHeight() - 130;
 			newProjectile.type = EntityType::PLAYER_PROJECTILE;
 			Projectiles.push_back(newProjectile);
@@ -634,77 +628,69 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 
 }
 
-void Player::Initialize() 
-{
-	
-	float window_width = (float)GetScreenWidth();
-	x_pos = window_width / 2;
-	std::cout<< "Find Player -X:" << GetScreenWidth() / 2 << "Find Player -Y" << GetScreenHeight() - player_base_height << std::endl;
 
-}
-
-void Player::Update() 
-{
-
-	//Movement
-	direction = 0;
-	if (IsKeyDown(KEY_LEFT))
-	{
-		direction--;
-	}
-	if (IsKeyDown(KEY_RIGHT))
-	{
-		direction++;
-	}
-
-	x_pos += speed * direction;
-
-	if (x_pos < 0 + radius)
-	{
-		x_pos = 0 + radius;
-	}
-	else if (x_pos > GetScreenWidth() - radius)
-	{
-		x_pos = GetScreenWidth() - radius;
-	}
-
-
-	//Determine frame for animation
-	timer += GetFrameTime();
-
-	if (timer > 0.4 && activeTexture == 2)
-	{
-		activeTexture = 0;
-		timer = 0;
-	}
-	else if (timer > 0.4)
-	{
-		activeTexture++;
-		timer = 0;
-	}
-
-	
-}
-
-void Player::Render(Texture2D texture) 
-{
-	float window_height = GetScreenHeight(); 
-
-	DrawTexturePro(texture,
-		{
-			0,
-			0,
-			352,
-			352,
-		},
-		{
-			x_pos, window_height - player_base_height,
-			100,
-			100,
-		}, { 50, 50 },
-		0,
-		WHITE);
-}
+//void Player::Update() 
+//{
+//
+//	//Movement
+//	direction = 0;
+//	if (IsKeyDown(KEY_LEFT))
+//	{
+//		direction--;
+//	}
+//	if (IsKeyDown(KEY_RIGHT))
+//	{
+//		direction++;
+//	}
+//
+//	x_pos += speed * direction;
+//
+//	if (x_pos < 0 + radius)
+//	{
+//		x_pos = 0 + radius;
+//	}
+//	else if (x_pos > GetScreenWidth() - radius)
+//	{
+//		x_pos = GetScreenWidth() - radius;
+//	}
+//
+//
+//	//Determine frame for animation
+//	timer += GetFrameTime();
+//
+//	if (timer > 0.4 && activeTexture == 2)
+//	{
+//		activeTexture = 0;
+//		timer = 0;
+//	}
+//	else if (timer > 0.4)
+//	{
+//		activeTexture++;
+//		timer = 0;
+//	}
+//
+//	
+//}
+//
+//void Player::Render(Texture2D texture) 
+//{
+//	float window_height = GetScreenHeight(); 
+//
+//	DrawTexturePro(texture,
+//		{
+//			0,
+//			0,
+//			352,
+//			352,
+//		},
+//		{
+//			x_pos, window_height - player_base_height,
+//			100,
+//			100,
+//		}, { 50, 50 },
+//		0,
+//		WHITE);
+//}
 
 
 

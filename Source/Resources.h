@@ -1,12 +1,6 @@
 #pragma once
 #include "raylib.h"
-#include "vector"
-
-// TODO: Make into a proper RAII class to prevent leaking of resources
-
-#pragma once
-#include "raylib.h"
-#include "vector"
+#include <vector>
 #include <string>
 #include <stdexcept>
 #include <format>

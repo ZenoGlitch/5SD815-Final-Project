@@ -176,15 +176,15 @@ void Game::Update()
 
 			//ENEMY PROJECTILES HERE
 			
-				if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
+			if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
+			{
+				if (CheckCollision({player.x_pos, GetScreenHeight() - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
-					if (CheckCollision({player.x_pos, GetScreenHeight() - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-					{
-						std::cout << "dead!\n"; 
-						Projectiles[i].active = false; 
-						player.lives -= 1; 
-					}
+					std::cout << "dead!\n";
+					Projectiles[i].active = false;
+					player.lives -= 1;
 				}
+			}
 			
 
 
@@ -204,10 +204,11 @@ void Game::Update()
 		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			float window_height = (float)GetScreenHeight();
+			
+			//float window_height = (float)GetScreenHeight();
 			Projectile newProjectile;
 			newProjectile.position.x = player.x_pos;
-			newProjectile.position.y = window_height - 130;
+			newProjectile.position.y = GetScreenHeight() - 130;
 			newProjectile.type = EntityType::PLAYER_PROJECTILE;
 			Projectiles.push_back(newProjectile);
 		}

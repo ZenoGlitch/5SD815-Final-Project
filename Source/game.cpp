@@ -9,7 +9,7 @@
 // MATH FUNCTIONS
 float lineLength(Vector2 A, Vector2 B) //Uses pythagoras to calculate the length of a line
 {
-	float length = sqrtf(pow(B.x - A.x, 2) + pow(B.y - A.y, 2));
+	const float length = static_cast<float>(sqrtf(static_cast<float>(pow(B.x - A.x, 2) + pow(B.y - A.y, 2))));
 
 	return length;
 }
@@ -86,7 +86,7 @@ void Game::Continue()
 void Game::Launch()
 {
 	//LOAD SOME RESOURCES HERE
-	resources.Load();
+	//resources.Load();
 }
 
 void Game::Update()
@@ -175,8 +175,7 @@ void Game::Update()
 			}
 
 			//ENEMY PROJECTILES HERE
-			for (int i = 0; i < Projectiles.size(); i++)
-			{
+			
 				if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
 				{
 					if (CheckCollision({player.x_pos, GetScreenHeight() - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
@@ -186,12 +185,12 @@ void Game::Update()
 						player.lives -= 1; 
 					}
 				}
-			}
+			
 
 
 			for (int b = 0; b < Walls.size(); b++)
 			{
-				if (CheckCollision(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				if (CheckCollision(Walls[b].position, static_cast<float>(Walls[b].radius), Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
 					// Kill!
 					std::cout << "Hit! \n";
@@ -370,24 +369,24 @@ void Game::Render()
 		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, 40, YELLOW);
 
 		//player rendering 
-		player.Render(resources.shipTextures[player.activeTexture]);
+		player.Render(resources.shipTextures[player.activeTexture].get());
 
 		//projectile rendering
 		for (int i = 0; i < Projectiles.size(); i++)
 		{
-			Projectiles[i].Render(resources.laserTexture);
+			Projectiles[i].Render(getTexture(resources.laserTexture));
 		}
 
 		// wall rendering 
 		for (int i = 0; i < Walls.size(); i++)
 		{
-			Walls[i].Render(resources.barrierTexture); 
+			Walls[i].Render(getTexture(resources.barrierTexture)); 
 		}
 
 		//alien rendering  
 		for (int i = 0; i < Aliens.size(); i++)
 		{
-			Aliens[i].Render(resources.alienTexture);
+			Aliens[i].Render(getTexture(resources.alienTexture));
 		}
 
 
@@ -488,8 +487,8 @@ void Game::SpawnAliens()
 		for (int col = 0; col < formationWidth; col++) {
 			Alien newAlien = Alien();
 			newAlien.active = true;
-			newAlien.position.x = formationX + 450 + (col * alienSpacing);
-			newAlien.position.y = formationY + (row * alienSpacing);
+			newAlien.position.x = static_cast<float>(formationX + 450 + (col * alienSpacing));
+			newAlien.position.y = static_cast<float>(formationY + (row * alienSpacing));
 			Aliens.push_back(newAlien);
 			std::cout << "Find Alien -X:" << newAlien.position.x << std::endl;
 			std::cout << "Find Alien -Y:" << newAlien.position.y << std::endl;
@@ -508,10 +507,10 @@ bool Game::CheckNewHighScore()
 	return false;
 }
 
-void Game::InsertNewHighScore(std::string name)
+void Game::InsertNewHighScore(std::string p_name)
 {
 	PlayerData newData;
-	newData.name = name;
+	newData.name = p_name;
 	newData.score = score;
 
 	for (int i = 0; i < Leaderboard.size(); i++)
@@ -523,7 +522,8 @@ void Game::InsertNewHighScore(std::string name)
 
 			Leaderboard.pop_back();
 
-			i = Leaderboard.size();
+			return;
+			/*i = Leaderboard.size();*/
 
 		}
 	}

@@ -4,6 +4,7 @@
 
 
 constexpr static float player_radius = 50.0f;
+
 class Player
 {
 	constexpr static float speed = 7.0f;

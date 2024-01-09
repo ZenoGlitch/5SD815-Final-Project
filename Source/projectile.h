@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 
-constexpr static int PROJECTILE_HEIGHT = 50;
+constexpr static int projectile_height = 50;
 
 class Projectile
 {

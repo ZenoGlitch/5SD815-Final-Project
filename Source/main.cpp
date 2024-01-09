@@ -13,8 +13,6 @@ int main(void)
 
     Game game = { State::STARTSCREEN }; // TODO: if gamestate is going to be used, maybe initialize in the constructor?
 
-    game.Launch();
-
     while (!WindowShouldClose())
     {
         game.Update();

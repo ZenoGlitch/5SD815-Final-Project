@@ -68,7 +68,6 @@ void Game::Start()
 void Game::End()
 {
 	//SAVE SCORE AND UPDATE SCOREBOARD
-	//Projectiles.clear();
 	playerBeams.clear();
 	enemyBeams.clear();
 	Walls.clear();
@@ -81,12 +80,6 @@ void Game::Continue()
 {
 	SaveLeaderboard();
 	gameState = State::STARTSCREEN;
-}
-
-void Game::Launch()
-{
-	//LOAD SOME RESOURCES HERE
-	//resources.Load();
 }
 
 void Game::Update()
@@ -196,7 +189,7 @@ void Game::Update()
 
 			for (auto& alien : Aliens)
 			{
-				if (CheckCollisionCircleRec(alien.position, alien.radius, playerBeam.rect))
+				if (CheckCollisionCircleRec(alien.position, alien_radius, playerBeam.rect))
 				{
 					playerBeam.active = false;
 					alien.active = false;
@@ -208,7 +201,7 @@ void Game::Update()
 		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			const Vector2 spawnPosition{ player.position.x + player_radius / 2,player.position.y - PROJECTILE_HEIGHT };
+			const Vector2 spawnPosition{ player.position.x + player_radius / 2,player.position.y - projectile_height };
 			const int speed = 15;
 			playerBeams.push_back(Projectile(spawnPosition, speed));
 		}
@@ -305,11 +298,7 @@ void Game::Update()
 
 				newHighScore = false;
 			}
-
-
 		}
-		
-
 
 		break;
 	default:
@@ -346,11 +335,6 @@ void Game::Render()
 		player.Render(resources.shipTextures[player.activeTexture].get());
 
 		//projectile rendering
-		//for (int i = 0; i < Projectiles.size(); i++)
-		//{
-		//	Projectiles[i].Render(getTexture(resources.laserTexture));
-		//}
-
 		for (auto& eBeam : enemyBeams)
 		{
 			eBeam.Render(getTexture(resources.laserTexture));
@@ -373,27 +357,15 @@ void Game::Render()
 			Aliens[i].Render(getTexture(resources.alienTexture));
 		}
 
-
-
-
-
-
 		break;
+
 	case State::ENDSCREEN:
 		//Code
 		//DrawText("END", 50, 50, 40, YELLOW);
 
-
-		
-
-		
-
-
 		if (newHighScore)
 		{
 			DrawText("NEW HIGHSCORE!", 600, 300, 60, YELLOW);
-
-
 
 			// BELOW CODE IS FOR NAME INPUT RENDER
 			DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, 20, YELLOW);
@@ -455,10 +427,8 @@ void Game::Render()
 			}
 		}
 
-		
-
-
 		break;
+
 	default:
 		//SHOULD NOT HAPPEN
 		break;
@@ -467,18 +437,14 @@ void Game::Render()
 
 void Game::SpawnAliens()
 {
-	for (int row = 0; row < formationHeight; row++) {
-		for (int col = 0; col < formationWidth; col++) {
-			Alien newAlien = Alien();
-			newAlien.active = true;
-			newAlien.position.x = static_cast<float>(formationX + 450 + (col * alienSpacing));
-			newAlien.position.y = static_cast<float>(formationY + (row * alienSpacing));
-			Aliens.push_back(newAlien);
-			std::cout << "Find Alien -X:" << newAlien.position.x << std::endl;
-			std::cout << "Find Alien -Y:" << newAlien.position.y << std::endl;
+	for (int row = 0; row < formationHeight; row++) 
+	{
+		for (int col = 0; col < formationWidth; col++) 
+		{
+			Vector2 spawnPos{ formationX + 450 + (col * alienSpacing), formationY + (row * alienSpacing) };
+			Aliens.push_back(Alien(spawnPos));
 		}
 	}
-
 }
 
 bool Game::CheckNewHighScore()
@@ -507,8 +473,6 @@ void Game::InsertNewHighScore(std::string p_name)
 			Leaderboard.pop_back();
 
 			return;
-			/*i = Leaderboard.size();*/
-
 		}
 	}
 }
@@ -538,7 +502,6 @@ void Game::SaveLeaderboard()
 	if (!file)
 	{
 		std::cout << "file not found \n";
-
 	}
 	else
 	{
@@ -617,109 +580,6 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 
 }
 
-
-//void Player::Update() 
-//{
-//
-//	//Movement
-//	direction = 0;
-//	if (IsKeyDown(KEY_LEFT))
-//	{
-//		direction--;
-//	}
-//	if (IsKeyDown(KEY_RIGHT))
-//	{
-//		direction++;
-//	}
-//
-//	x_pos += speed * direction;
-//
-//	if (x_pos < 0 + radius)
-//	{
-//		x_pos = 0 + radius;
-//	}
-//	else if (x_pos > GetScreenWidth() - radius)
-//	{
-//		x_pos = GetScreenWidth() - radius;
-//	}
-//
-//
-//	//Determine frame for animation
-//	timer += GetFrameTime();
-//
-//	if (timer > 0.4 && activeTexture == 2)
-//	{
-//		activeTexture = 0;
-//		timer = 0;
-//	}
-//	else if (timer > 0.4)
-//	{
-//		activeTexture++;
-//		timer = 0;
-//	}
-//
-//	
-//}
-//
-//void Player::Render(Texture2D texture) 
-//{
-//	float window_height = GetScreenHeight(); 
-//
-//	DrawTexturePro(texture,
-//		{
-//			0,
-//			0,
-//			352,
-//			352,
-//		},
-//		{
-//			x_pos, window_height - player_base_height,
-//			100,
-//			100,
-//		}, { 50, 50 },
-//		0,
-//		WHITE);
-//}
-
-
-
-//void Projectile::Update()
-//{
-//	position.y -= speed;
-//
-//	// UPDATE LINE POSITION
-//	lineStart.y = position.y - 15;
-//	lineEnd.y   = position.y + 15;
-//
-//	lineStart.x = position.x;
-//	lineEnd.x   = position.x;
-//
-//	if (position.y < 0 || position.y > 1500)
-//	{
-//		active = false;
-//	}
-//}
-//
-//void Projectile::Render(Texture2D texture)
-//{
-//	//DrawCircle((int)position.x, (int)position.y, 10, RED);
-//	DrawTexturePro(texture,
-//		{
-//			0,
-//			0,
-//			176,
-//			176,
-//		},
-//		{
-//			position.x,
-//			position.y,
-//			50,
-//			50,
-//		}, { 25 , 25 },
-//		0,
-//		WHITE);
-//}
-
 void Wall::Render(Texture2D texture)
 {
 	DrawTexturePro(texture,
@@ -745,66 +605,12 @@ void Wall::Render(Texture2D texture)
 
 void Wall::Update() 
 {
-
 	// set walls as inactive when out of health
 	if (health < 1)
 	{
 		active = false;
 	}
-
-
 }
-
-void Alien::Update() 
-{
-	int window_width = GetScreenWidth(); 
-
-	if (moveRight)
-	{
-		position.x += speed; 
-
-		if (position.x >= GetScreenWidth())
-		{
-			moveRight = false; 
-			position.y += 50; 
-		}
-	}
-	else 
-	{
-		position.x -= speed; 
-
-		if (position.x <= 0)
-		{
-			moveRight = true; 
-			position.y += 50; 
-		}
-	}
-}
-
-void Alien::Render(Texture2D texture) 
-{
-	//DrawRectangle((int)position.x - 25, (int)position.y, 30, 30, RED);
-	//DrawCircle((int)position.x, (int)position.y, radius, GREEN);
-	
-	
-
-	DrawTexturePro(texture,
-		{
-			0,
-			0,
-			352,
-			352,
-		},
-		{
-			position.x,
-			position.y,
-			100,
-			100,
-		}, {50 , 50},
-		0,
-		WHITE);
-}
-
 
 //BACKGROUND
 void Star::Update(float starOffset)

@@ -45,25 +45,6 @@ public:
 	void Update(); 
 };
 
-// TODO: Break out Alien into its own class
-//struct Alien
-//{
-//public:
-//	
-//	Color color = WHITE; 
-//	Vector2 position = {0, 0};
-//
-//	float alien_radius = 30;
-//	bool active = true;  
-//	bool moveRight = true; 
-//	
-//	EntityType type = EntityType::ENEMY; 
-//
-//	int speed = 2; 
-//		 
-//	void Update(); 
-//	void Render(Texture2D texture); 
-//};
 
 // TODO: Should star be part of background or should it be its own class?
 struct Star
@@ -103,13 +84,6 @@ struct Game
 	//Aliens shooting
 	float shootTimer = 0;
 
-	//Aliens stuff? (idk cause liv wrote this)
-
-	//int formationWidth = 8;
-	//int formationHeight = 5;
-	//int alienSpacing = 80;
-	//int formationX = 100;
-	//int formationY = 50;
 
 	bool newHighScore = false;
 	
@@ -124,22 +98,18 @@ struct Game
 
 	void SpawnAliens();
 
-	bool CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineTop, Vector2 lineBottom);
-
-	bool CheckNewHighScore();
+	void HandleAllCollisions() noexcept;
+	bool CheckNewHighScore() noexcept;
 
 	void InsertNewHighScore(std::string name);
 
-	void LoadLeaderboard();
 	void SaveLeaderboard();
 
+	void RemoveDeadEntities();
 
-	// Entity Storage and Resources
 	Resources resources;
 
 	Player player;
-
-	/*std::vector<Projectile> Projectiles;*/ // TODO: Separate list of projectiles into two list, one for player, one for alien
 
 	std::vector<Projectile> playerBeams;
 	std::vector<Projectile> enemyBeams;
@@ -152,9 +122,6 @@ struct Game
 	
 	Background background;
 
-
-
-	//Vector2 playerPos;
 	Vector2 alienPos; 
 	Vector2 cornerPos;
 	float offset;

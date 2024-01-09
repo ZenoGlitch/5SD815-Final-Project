@@ -33,9 +33,6 @@
     <ClCompile Include="Source\alien.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\barrier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

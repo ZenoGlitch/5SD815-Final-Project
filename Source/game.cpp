@@ -33,7 +33,6 @@ void Game::Start()
 
 void Game::End() noexcept
 {
-	//SAVE SCORE AND UPDATE SCOREBOARD
 	playerBeams.clear();
 	enemyBeams.clear();
 	Barriers.clear();
@@ -116,23 +115,7 @@ void Game::Update()
 		}
 
 		//Aliens Shooting
-		shootTimer += 1;
-		if (shootTimer > 59) //once per second
-		{
-			int randomAlienIndex = 0;
-
-			if (Aliens.size() > 1)
-			{
-				randomAlienIndex = std::rand() % Aliens.size();
-			}
-
-			Vector2 spawnPosition = Aliens[randomAlienIndex].position;
-			spawnPosition.y += 40;
-			constexpr int speed = -15;
-
-			enemyBeams.emplace_back(spawnPosition, speed);
-			shootTimer = 0;
-		}
+		AliensShooting();
 
 		RemoveDeadEntities();
 		break;
@@ -146,8 +129,14 @@ void Game::Update()
 
 		if (newHighScore)
 		{
-			if (CheckCollisionPointRec(GetMousePosition(), textBox)) mouseOnText = true;
-			else mouseOnText = false;
+			if (CheckCollisionPointRec(GetMousePosition(), textBox))
+			{
+				mouseOnText = true;
+			}
+			else
+			{
+				mouseOnText = false;
+			}
 
 			if (mouseOnText)
 			{
@@ -209,24 +198,24 @@ void Game::Update()
 	}
 }
 
-void Game::RenderStartScreen()
+void Game::RenderStartScreen() noexcept
 {
-	const int posX { 200 };
-	const int titlePosY { 100 };
-	const int titleFontSize { 160 };
+	constexpr int posX { 200 };
+	constexpr int titlePosY { 100 };
+	constexpr int titleFontSize { 160 };
 	DrawText("SPACE INVADERS", posX, titlePosY, titleFontSize, YELLOW);
 
-	const int promptPosY { 350 };
-	const int promptFontSize { 40 };
+	constexpr int promptPosY { 350 };
+	constexpr int promptFontSize { 40 };
 	DrawText("PRESS SPACE TO BEGIN", posX, promptPosY, promptFontSize, YELLOW);
 }
 
-void Game::RenderUI()
+void Game::RenderUI() noexcept
 {
-	const int fontSize { 40 };
-	const int linePosX { 50 };
-	const int firstLinePosY { 20 };
-	const int secondLinePosY { 70 };
+	constexpr int fontSize { 40 };
+	constexpr int linePosX { 50 };
+	constexpr int firstLinePosY { 20 };
+	constexpr int secondLinePosY { 70 };
 	DrawText(TextFormat("Score: %i", score), linePosX, firstLinePosY, fontSize, YELLOW);
 	DrawText(TextFormat("Lives: %i", player.lives), linePosX, secondLinePosY, fontSize, YELLOW);
 }
@@ -363,6 +352,27 @@ void Game::SpawnAliens()
 			const Vector2 spawnPos{ formationX + 450 + (col * alienSpacing), formationY + (row * alienSpacing) };
 			Aliens.emplace_back(spawnPos);
 		}
+	}
+}
+
+void Game::AliensShooting() //TODO: simplify?
+{
+	shootTimer += 1;
+	if (shootTimer > 59) //once per second
+	{
+		int randomAlienIndex = 0;
+
+		if (Aliens.size() > 1)
+		{
+			randomAlienIndex = std::rand() % Aliens.size();
+		}
+
+		Vector2 spawnPosition = Aliens[randomAlienIndex].position;
+		spawnPosition.y += 40;
+		constexpr int speed = -15;
+
+		enemyBeams.emplace_back(spawnPosition, speed);
+		shootTimer = 0;
 	}
 }
 

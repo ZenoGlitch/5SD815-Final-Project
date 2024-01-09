@@ -74,12 +74,14 @@ struct Game
 	void Continue();
 
 	void Update();
-	void RenderStartScreen();
-	void RenderUI();
+	void RenderStartScreen() noexcept;
+	void RenderUI() noexcept;
 	void Render();
 
 	void SpawnBarriers();
 	void SpawnAliens();
+
+	void AliensShooting();
 
 	void HandleEnemyBeamCollision() noexcept;
 	void HandlePlayerBeamCollision() noexcept;

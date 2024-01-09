@@ -247,9 +247,9 @@ void Game::Render()
 			pBeam.Render(getTexture(resources.laserTexture));
 		}
 
-		for (auto& wall : Barriers)
+		for (auto& barrier : Barriers)
 		{
-			wall.Render(getTexture(resources.barrierTexture));
+			barrier.Render(getTexture(resources.barrierTexture));
 		}
 
 		for (auto& alien : Aliens)

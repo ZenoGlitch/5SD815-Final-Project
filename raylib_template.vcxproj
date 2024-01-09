@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\alien.cpp" />
+    <ClCompile Include="Source\background.cpp" />
     <ClCompile Include="Source\barrier.cpp" />
     <ClCompile Include="Source\game.cpp" />
     <ClCompile Include="Source\main.cpp" />
@@ -177,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\alien.h" />
+    <ClInclude Include="Source\background.h" />
     <ClInclude Include="Source\barrier.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\player.h" />

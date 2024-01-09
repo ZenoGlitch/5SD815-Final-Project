@@ -1,19 +1,18 @@
 #include "raylib.h"
 #include "game.h"
+#include "window.h"
 
-// TODO: Remove unnecessary comments
-constexpr int screenWidth = 1920;
-constexpr int screenHeight = 1080;
+
 
 int main(void)
 {    
-    InitWindow(screenWidth, screenHeight, "SPACE INVADERS"); // TODO: Make window into an RAII class
+    Window window;
 
     SetTargetFPS(60);
 
     Game game = { State::STARTSCREEN }; // TODO: if gamestate is going to be used, maybe initialize in the constructor?
 
-    while (!WindowShouldClose())
+    while (!window.ShouldClose())
     {
         game.Update();
         
@@ -24,8 +23,6 @@ int main(void)
 
         EndDrawing();
     }
-
-    CloseWindow();
 
     std::string filename = "level.txt";  
 

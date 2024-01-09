@@ -1,13 +1,8 @@
 #include "player.h"
 
-Player::Player() noexcept
-{
-
-}
-
 void Player::Render(Texture2D tex) noexcept
 {
-	constexpr float offset = 50.0f;
+	constexpr float offset { 50.0f };
 	DrawTexture(tex, position.x - offset, position.y - offset, WHITE);
 }
 
@@ -30,11 +25,10 @@ void Player::Update() noexcept
 	{
 		position.x = player_radius;
 	}
-	else if (position.x > GetScreenWidth() - player_radius)
+	else if (position.x > GetScreenWidthF() - player_radius)
 	{
-		position.x = GetScreenWidth() - player_radius;
+		position.x = GetScreenWidthF() - player_radius;
 	}
-
 
 	//Determine frame for animation
 	timer += GetFrameTime();
@@ -49,6 +43,4 @@ void Player::Update() noexcept
 		activeTexture++;
 		timer = 0;
 	}
-
-
 }

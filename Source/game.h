@@ -16,43 +16,19 @@ enum struct State
 	ENDSCREEN
 };
 
-enum struct EntityType // TODO: Remove this struct, types can be handled with proper use of classes
-{
-	PLAYER,
-	ENEMY,
-	PLAYER_PROJECTILE,
-	ENEMY_PROJECTILE
-};
-
 struct PlayerData
 {
-	std::string name;
-	int score;
+	std::string name{};
+	int score{0};
 };
-
-// TODO: Break out Wall into its own class
-struct Wall 
-{
-public: 
-	Vector2 position; 
-	Rectangle rec; 
-	bool active; 
-	Color color; 
-	int health = 50;
-
-
-	void Render(Texture2D texture); 
-	void Update(); 
-};
-
 
 // TODO: Should star be part of background or should it be its own class?
 struct Star
 {
 	Vector2 initPosition = { 0, 0 };
 	Vector2 position = { 0, 0 };
-	Color color = GRAY;
-	float size = 0;
+	Color color { GRAY };
+	float size { 0 };
 	void Update(float starOffset);
 	void Render();
 };
@@ -60,33 +36,37 @@ struct Star
 // TODO: Break out Background into its own class
 struct Background
 {
-	
-
 	std::vector<Star> Stars;
 
 	void Initialize(int starAmount);
 	void Update(float offset);
 	void Render();
-
 };
 
 struct Game
 {
 	// Gamestate
-	State gameState { State::STARTSCREEN };
+	State gameState { State::STARTSCREEN };	
+	Resources resources;
+	Background background;
+	Player player;
+	std::vector<Projectile> playerBeams;
+	std::vector<Projectile> enemyBeams;
+	std::vector<Barrier> Barriers;
+	std::vector<Alien> Aliens;
+	std::vector<PlayerData> Leaderboard = { {"Player 1", 500}, {"Player 2", 400}, {"Player 3", 300}, {"Player 4", 200}, {"Player 5", 100} };
 
-	// Score
+	Vector2 alienPos;
+	Vector2 cornerPos;
+	float offset;
+
 	int score { 0 };
 
-	// for later, make a file where you can adjust the number of walls (config file) 
 	const int barrierCount { 5 };
 
-	//Aliens shooting
-	float shootTimer = 0;
+	float shootTimer { 0 };
 
-
-	bool newHighScore = false;
-	
+	bool newHighScore { false };
 
 	void Start();
 	void End() noexcept;
@@ -94,12 +74,17 @@ struct Game
 	void Continue();
 
 	void Update();
+	void RenderStartScreen();
+	void RenderUI();
 	void Render();
 
+	void SpawnBarriers();
 	void SpawnAliens();
 
+	void HandleEnemyBeamCollision() noexcept;
+	void HandlePlayerBeamCollision() noexcept;
 	void HandleAllCollisions() noexcept;
-	bool CheckNewHighScore() noexcept;
+	bool CheckNewHighScore() const noexcept;
 
 	void InsertNewHighScore(std::string name);
 
@@ -107,25 +92,7 @@ struct Game
 
 	void RemoveDeadEntities() noexcept;
 
-	Resources resources;
-
-	Player player;
-
-	std::vector<Projectile> playerBeams;
-	std::vector<Projectile> enemyBeams;
-
-	std::vector<Barrier> Barriers;
-
-	std::vector<Alien> Aliens;
-
-	std::vector<PlayerData> Leaderboard = { {"Player 1", 500}, {"Player 2", 400}, {"Player 3", 300}, {"Player 4", 200}, {"Player 5", 100} };
-	
-	Background background;
-
-	Vector2 alienPos; 
-	Vector2 cornerPos;
-	float offset;
-
+	bool ShouldGameEnd() noexcept;
 
 
 	//TEXTBOX ENTER

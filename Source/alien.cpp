@@ -11,7 +11,7 @@ void Alien::Update() noexcept
 	{
 		position.x += alien_speed;
 
-		if (position.x >= GetScreenWidth())
+		if (position.x >= GetScreenWidthF())
 		{
 			moveRight = false;
 			position.y += 50;

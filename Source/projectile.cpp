@@ -1,4 +1,5 @@
 #include "projectile.h"
+#include "Resources.h"
 
 Projectile::Projectile(Vector2 p_position, int p_speed) noexcept
 	: position(p_position)
@@ -21,7 +22,7 @@ void Projectile::Update() noexcept
 	rect.x = position.x;
 	rect.y = position.y;
 
-	if (position.y < 0 || position.y > GetScreenHeight() + projectile_height)
+	if (position.y < 0 || position.y > GetScreenHeightF() + projectile_height)
 	{
 		active = false;
 	}

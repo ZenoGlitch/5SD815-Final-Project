@@ -7,40 +7,24 @@
 
 static bool is_dead(const auto& entity) noexcept 
 {
-	return !entity.active;
+	return !entity.IsAlive();
 }
 
 // MATH FUNCTIONS
 static float lineLength(Vector2 A, Vector2 B) noexcept //Uses pythagoras to calculate the length of a line
 {
-	const float length = static_cast<float>(sqrtf(static_cast<float>(pow(B.x - A.x, 2) + pow(B.y - A.y, 2))));
-
-	return length;
+	return std::sqrtf(std::powf(B.x - A.x, 2) + std::powf(B.y - A.y, 2));
 }
 
 void Game::Start()
 {
 	// creating walls 
-	const float barrier_distance = GetScreenWidth() / (barrierCount + 1); 
-	for (int i = 0; i < barrierCount; i++)
-	{
-		Barrier newBarrier;
-		newBarrier.position.y = GetScreenHeight() - 250;
-		newBarrier.position.x = barrier_distance * (i + 1); 
+	SpawnBarriers();
 
-		Barriers.push_back(newBarrier); 
-
-	}
-
-	//creating aliens
 	SpawnAliens();
+			
+	background.Initialize(600); //TODO: two step init
 
-	//creating background
-	Background newBackground;
-	newBackground.Initialize(600);
-	background = newBackground;
-
-	//reset score
 	score = 0;
 
 	gameState = State::GAMEPLAY;
@@ -69,7 +53,6 @@ void Game::Update()
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
-		//Code 
 		if (IsKeyReleased(KEY_SPACE))
 		{
 			Start();
@@ -77,30 +60,18 @@ void Game::Update()
 
 		break;
 	case State::GAMEPLAY:
-		//Code
-		if (IsKeyReleased(KEY_Q))
+		
+		
+		if (ShouldGameEnd())
 		{
 			End();
 		}
 
-		//Update Player
 		player.Update();
 		
-		//Update Aliens and Check if they are past player
-		for (int i = 0; i < Aliens.size(); i++)
+		for (auto& alien : Aliens)
 		{
-			Aliens[i].Update(); 
-
-			if (Aliens[i].position.y > GetScreenHeight() - player.player_base_height)
-			{
-				End();
-			}
-		}
-
-		//End game if player dies
-		if (player.lives < 1)
-		{
-			End();
+			alien.Update();
 		}
 
 		//Spawn new aliens if aliens run out
@@ -152,14 +123,14 @@ void Game::Update()
 
 			if (Aliens.size() > 1)
 			{
-				randomAlienIndex = rand() % Aliens.size();
+				randomAlienIndex = std::rand() % Aliens.size();
 			}
 
 			Vector2 spawnPosition = Aliens[randomAlienIndex].position;
 			spawnPosition.y += 40;
 			constexpr int speed = -15;
 
-			enemyBeams.push_back(Projectile(spawnPosition, speed));
+			enemyBeams.emplace_back(spawnPosition, speed);
 			shootTimer = 0;
 		}
 
@@ -167,15 +138,11 @@ void Game::Update()
 		break;
 
 	case State::ENDSCREEN:
-		//Code
-	
 		//Exit endscreen
 		if (IsKeyReleased(KEY_ENTER) && !newHighScore)
 		{
 			Continue();
 		}
-
-	
 
 		if (newHighScore)
 		{
@@ -242,34 +209,45 @@ void Game::Update()
 	}
 }
 
+void Game::RenderStartScreen()
+{
+	const int posX { 200 };
+	const int titlePosY { 100 };
+	const int titleFontSize { 160 };
+	DrawText("SPACE INVADERS", posX, titlePosY, titleFontSize, YELLOW);
+
+	const int promptPosY { 350 };
+	const int promptFontSize { 40 };
+	DrawText("PRESS SPACE TO BEGIN", posX, promptPosY, promptFontSize, YELLOW);
+}
+
+void Game::RenderUI()
+{
+	const int fontSize { 40 };
+	const int linePosX { 50 };
+	const int firstLinePosY { 20 };
+	const int secondLinePosY { 70 };
+	DrawText(TextFormat("Score: %i", score), linePosX, firstLinePosY, fontSize, YELLOW);
+	DrawText(TextFormat("Lives: %i", player.lives), linePosX, secondLinePosY, fontSize, YELLOW);
+}
 
 void Game::Render()
 {
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
-		//Code
-		DrawText("SPACE INVADERS", 200, 100, 160, YELLOW);
-
-		DrawText("PRESS SPACE TO BEGIN", 200, 350, 40, YELLOW);
-
+		RenderStartScreen();
 
 		break;
+
 	case State::GAMEPLAY:
-		//Code
 
-
-		//background render LEAVE THIS AT TOP
 		background.Render();
 
-		//DrawText("GAMEPLAY", 50, 30, 40, YELLOW);
-		DrawText(TextFormat("Score: %i", score), 50, 20, 40, YELLOW);
-		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, 40, YELLOW);
+		RenderUI();
 
-		//player rendering 
 		player.Render(resources.shipTextures[player.activeTexture].get());
 
-		//projectile rendering
 		for (auto& eBeam : enemyBeams)
 		{
 			eBeam.Render(getTexture(resources.laserTexture));
@@ -280,13 +258,11 @@ void Game::Render()
 			pBeam.Render(getTexture(resources.laserTexture));
 		}
 
-		// wall rendering 
 		for (auto& wall : Barriers)
 		{
 			wall.Render(getTexture(resources.barrierTexture));
 		}
 
-		//alien rendering  
 		for (auto& alien : Aliens)
 		{
 			alien.Render(getTexture(resources.alienTexture));
@@ -365,6 +341,19 @@ void Game::Render()
 	}
 }
 
+void Game::SpawnBarriers()
+{
+	const float barrier_distance = GetScreenWidthF() / (barrierCount + 1.0f);
+	const float barrier_y_pos = GetScreenHeightF() - barrier_offset_from_screen;
+	Barriers.reserve(barrierCount);
+
+	for (int i = 0; i < barrierCount; i++)
+	{
+		Vector2 spawnPos{ barrier_distance * (i + 1), barrier_y_pos };
+		Barriers.emplace_back(spawnPos);
+	}
+}
+
 void Game::SpawnAliens()
 {
 	for (int row = 0; row < formationHeight; row++)
@@ -372,12 +361,12 @@ void Game::SpawnAliens()
 		for (int col = 0; col < formationWidth; col++)
 		{
 			const Vector2 spawnPos{ formationX + 450 + (col * alienSpacing), formationY + (row * alienSpacing) };
-			Aliens.push_back(Alien(spawnPos));
+			Aliens.emplace_back(spawnPos);
 		}
 	}
 }
 
-void Game::HandleAllCollisions() noexcept
+void Game::HandleEnemyBeamCollision() noexcept
 {
 	for (auto& enemyBeam : enemyBeams)
 	{
@@ -396,7 +385,10 @@ void Game::HandleAllCollisions() noexcept
 			player.lives -= 1;
 		}
 	}
+}
 
+void Game::HandlePlayerBeamCollision() noexcept
+{
 	for (auto& playerBeam : playerBeams)
 	{
 		for (auto& wall : Barriers)
@@ -420,17 +412,19 @@ void Game::HandleAllCollisions() noexcept
 	}
 }
 
-bool Game::CheckNewHighScore() noexcept
+void Game::HandleAllCollisions() noexcept
 {
-	if (score > Leaderboard[4].score)
-	{
-		return true;
-	}
+	HandleEnemyBeamCollision();
 
-	return false;
+	HandlePlayerBeamCollision();
 }
 
-void Game::InsertNewHighScore(std::string p_name)
+bool Game::CheckNewHighScore() const noexcept
+{
+	return (score > Leaderboard.back().score);
+}
+
+void Game::InsertNewHighScore(std::string p_name) // future problems
 {
 	PlayerData newData;
 	newData.name = p_name;
@@ -481,6 +475,26 @@ void Game::RemoveDeadEntities() noexcept
 	std::erase_if(Barriers, is_dead<Barrier>);
 }
 
+bool Game::ShouldGameEnd() noexcept
+{
+	if (IsKeyReleased(KEY_Q))
+	{
+		return true;
+	}
+	if (player.lives < 1)
+	{
+		return true;
+	}
+	for (auto& alien : Aliens)
+	{
+		if (alien.position.y > GetScreenHeightF() - player.player_base_height)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 //BACKGROUND
 void Star::Update(float starOffset)
 {
@@ -501,7 +515,7 @@ void Background::Initialize(int starAmount)
 	{
 		Star newStar;
 
-		newStar.initPosition.x = GetRandomValue(-150, GetScreenWidth() + 150);
+		newStar.initPosition.x = GetRandomValue(-150, GetScreenWidth() + 150); //TODO: Wrap GetRandomValue or do something that returns float instead, also use GetScreenWidthF instead.
 		newStar.initPosition.y = GetRandomValue(0, GetScreenHeight());
 		
 		//random color?

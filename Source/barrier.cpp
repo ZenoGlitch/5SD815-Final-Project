@@ -14,8 +14,17 @@ void Barrier::Render(Texture2D texture) noexcept
 void Barrier::Update() noexcept
 {
 	// set walls as inactive when out of health
-	if (health < 1)
+	//if (health < 1)
+	//{
+	//	active = false;
+	//}
+}
+
+bool Barrier::IsAlive() const noexcept
+{
+	if (health > 0)
 	{
-		active = false;
+		return true;
 	}
+	return false;
 }

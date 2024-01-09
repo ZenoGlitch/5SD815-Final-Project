@@ -7,6 +7,16 @@
 
 using namespace std::literals::string_view_literals;
 
+static inline float GetScreenWidthF() noexcept 
+{
+	return static_cast<float>(GetScreenWidth());
+}
+
+static inline float GetScreenHeightF() noexcept 
+{
+	return static_cast<float>(GetScreenHeight());
+}
+
 struct MyTexture
 {
 	Texture2D tex;

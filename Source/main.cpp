@@ -2,8 +2,6 @@
 #include "game.h"
 #include "window.h"
 
-
-
 int main(void)
 {    
     Window window;

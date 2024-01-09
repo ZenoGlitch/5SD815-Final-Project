@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 
+constexpr static int projectile_width = 10;
 constexpr static int projectile_height = 50;
 
 class Projectile

@@ -5,13 +5,13 @@
 #include <thread>
 #include <fstream>
 
-bool is_dead(const auto& entity) noexcept 
+static bool is_dead(const auto& entity) noexcept 
 {
 	return !entity.active;
 }
 
 // MATH FUNCTIONS
-float lineLength(Vector2 A, Vector2 B) //Uses pythagoras to calculate the length of a line
+static float lineLength(Vector2 A, Vector2 B) noexcept //Uses pythagoras to calculate the length of a line
 {
 	const float length = static_cast<float>(sqrtf(static_cast<float>(pow(B.x - A.x, 2) + pow(B.y - A.y, 2))));
 
@@ -21,22 +21,19 @@ float lineLength(Vector2 A, Vector2 B) //Uses pythagoras to calculate the length
 void Game::Start()
 {
 	// creating walls 
-	float window_width = (float)GetScreenWidth(); 
-	float window_height = (float)GetScreenHeight(); 
-	float wall_distance = window_width / (wallCount + 1); 
-	for (int i = 0; i < wallCount; i++)
+	const float barrier_distance = GetScreenWidth() / (barrierCount + 1); 
+	for (int i = 0; i < barrierCount; i++)
 	{
-		Wall newWalls;
-		newWalls.position.y = window_height - 250; 
-		newWalls.position.x = wall_distance * (i + 1); 
+		Barrier newBarrier;
+		newBarrier.position.y = GetScreenHeight() - 250;
+		newBarrier.position.x = barrier_distance * (i + 1); 
 
-		Walls.push_back(newWalls); 
+		Barriers.push_back(newBarrier); 
 
 	}
 
 	//creating aliens
 	SpawnAliens();
-	
 
 	//creating background
 	Background newBackground;
@@ -50,12 +47,12 @@ void Game::Start()
 
 }
 
-void Game::End()
+void Game::End() noexcept
 {
 	//SAVE SCORE AND UPDATE SCOREBOARD
 	playerBeams.clear();
 	enemyBeams.clear();
-	Walls.clear();
+	Barriers.clear();
 	Aliens.clear();
 	newHighScore = CheckNewHighScore();
 	gameState = State::ENDSCREEN;
@@ -131,12 +128,7 @@ void Game::Update()
 		}
 
 		//UPDATE WALLS
-		//for (int i = 0; i < Walls.size(); i++)
-		//{
-		//	Walls[i].Update();
-		//}
-
-		for (auto& wall : Walls)
+		for (auto& wall : Barriers)
 		{
 			wall.Update();
 		}
@@ -289,7 +281,7 @@ void Game::Render()
 		}
 
 		// wall rendering 
-		for (auto& wall : Walls)
+		for (auto& wall : Barriers)
 		{
 			wall.Render(getTexture(resources.barrierTexture));
 		}
@@ -389,9 +381,9 @@ void Game::HandleAllCollisions() noexcept
 {
 	for (auto& enemyBeam : enemyBeams)
 	{
-		for (auto& wall : Walls)
+		for (auto& wall : Barriers)
 		{
-			if (CheckCollisionCircleRec(wall.position, wall.radius, enemyBeam.rect))
+			if (CheckCollisionCircleRec(wall.position, barrier_radius, enemyBeam.rect))
 			{
 				enemyBeam.active = false;
 				wall.health -= 1;
@@ -407,9 +399,9 @@ void Game::HandleAllCollisions() noexcept
 
 	for (auto& playerBeam : playerBeams)
 	{
-		for (auto& wall : Walls)
+		for (auto& wall : Barriers)
 		{
-			if (CheckCollisionCircleRec(wall.position, wall.radius, playerBeam.rect))
+			if (CheckCollisionCircleRec(wall.position, barrier_radius, playerBeam.rect))
 			{
 				playerBeam.active = false;
 				wall.health -= 1;
@@ -481,43 +473,12 @@ void Game::SaveLeaderboard()
 	// CLOSE FILE
 }
 
-void Game::RemoveDeadEntities()
+void Game::RemoveDeadEntities() noexcept
 {
 	std::erase_if(playerBeams, is_dead<Projectile>);
 	std::erase_if(enemyBeams, is_dead<Projectile>);
 	std::erase_if(Aliens, is_dead<Alien>);
-	std::erase_if(Walls, is_dead<Wall>);
-}
-
-void Wall::Render(Texture2D texture)
-{
-	DrawTexturePro(texture,
-		{
-			0,
-			0,
-			704,
-			704,
-		},
-		{
-			position.x,
-			position.y,
-			200,
-			200,
-		}, { 100 , 100 },
-		0,
-		WHITE);
-
-	DrawText(TextFormat("%i", health), position.x-21, position.y+10, 40, RED);
-	
-}
-
-void Wall::Update() 
-{
-	// set walls as inactive when out of health
-	if (health < 1)
-	{
-		active = false;
-	}
+	std::erase_if(Barriers, is_dead<Barrier>);
 }
 
 //BACKGROUND

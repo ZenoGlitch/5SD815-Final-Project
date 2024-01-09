@@ -4,6 +4,7 @@
 #include "player.h"
 #include "projectile.h"
 #include "alien.h"
+#include "barrier.h"
 #include <vector>
 #include <string>
 
@@ -38,7 +39,6 @@ public:
 	bool active; 
 	Color color; 
 	int health = 50;
-	int radius = 60;
 
 
 	void Render(Texture2D texture); 
@@ -73,13 +73,13 @@ struct Background
 struct Game
 {
 	// Gamestate
-	State gameState = {};
+	State gameState { State::STARTSCREEN };
 
 	// Score
-	int score;
+	int score { 0 };
 
 	// for later, make a file where you can adjust the number of walls (config file) 
-	int wallCount = 5;
+	const int barrierCount { 5 };
 
 	//Aliens shooting
 	float shootTimer = 0;
@@ -89,7 +89,7 @@ struct Game
 	
 
 	void Start();
-	void End();
+	void End() noexcept;
 
 	void Continue();
 
@@ -105,7 +105,7 @@ struct Game
 
 	void SaveLeaderboard();
 
-	void RemoveDeadEntities();
+	void RemoveDeadEntities() noexcept;
 
 	Resources resources;
 
@@ -114,7 +114,7 @@ struct Game
 	std::vector<Projectile> playerBeams;
 	std::vector<Projectile> enemyBeams;
 
-	std::vector<Wall> Walls;
+	std::vector<Barrier> Barriers;
 
 	std::vector<Alien> Aliens;
 

@@ -5,8 +5,6 @@
 
 //TODO: const members are nono. static const is fine. 
 
-
-
 int main(void)
 {    
     try {
@@ -16,13 +14,7 @@ int main(void)
         while (!window.ShouldClose())
         {
             game.Update();
-
-            BeginDrawing();
-            ClearBackground(BLACK);
-
             game.Render();
-
-            EndDrawing();
         }
     }
     catch (const std::runtime_error& e) {

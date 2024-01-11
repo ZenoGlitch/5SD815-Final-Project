@@ -10,7 +10,6 @@ static bool is_dead(const auto& entity) noexcept
 	return !entity.IsAlive();
 }
 
-// MATH FUNCTIONS
 static float lineLength(Vector2 A, Vector2 B) noexcept //Uses pythagoras to calculate the length of a line
 {
 	return std::sqrtf(std::powf(B.x - A.x, 2) + std::powf(B.y - A.y, 2));
@@ -18,17 +17,11 @@ static float lineLength(Vector2 A, Vector2 B) noexcept //Uses pythagoras to calc
 
 void Game::Start()
 {
-	// creating walls 
 	SpawnBarriers();
-
 	SpawnAliens();
-			
-	//background.Initialize(600); //TODO: two step init
-
 	score = 0;
-
+	player.Reset();
 	gameState = State::GAMEPLAY;
-
 }
 
 void Game::End() noexcept
@@ -56,11 +49,9 @@ void Game::Update()
 		{
 			Start();
 		}
-
 		break;
+
 	case State::GAMEPLAY:
-		
-		
 		if (ShouldGameEnd())
 		{
 			End();
@@ -73,20 +64,12 @@ void Game::Update()
 			alien.Update();
 		}
 
-		//Spawn new aliens if aliens run out
-		if (Aliens.size() < 1)
-		{
-			SpawnAliens();
-		}
+		SpawnAliens();
 
-
-		// Update background with offset
 		cornerPos = { 0.0f, player.player_base_height };
 		offset = lineLength(player.position, cornerPos) * -1;
 		background.Update(offset / 15);
 
-
-		//UPDATE PROJECTILES
 		for (auto& eBeam : enemyBeams)
 		{
 			eBeam.Update();
@@ -97,31 +80,25 @@ void Game::Update()
 			pBeam.Update();
 		}
 
-		//UPDATE WALLS
 		for (auto& wall : Barriers)
 		{
 			wall.Update();
 		}
 
-		//CHECK ALL COLLISONS HERE
-		HandleAllCollisions();
+		HandleAllBeamCollisions();
 
-		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			const Vector2 spawnPosition{ player.position.x + player_radius / 2,player.position.y - projectile_height };
-			constexpr int speed = 15;
-			playerBeams.push_back(Projectile(spawnPosition, speed));
+			SpawnPlayerBeams();
 		}
 
-		//Aliens Shooting
 		AliensShooting();
 
 		RemoveDeadEntities();
 		break;
 
 	case State::ENDSCREEN:
-		//Exit endscreen
+
 		if (IsKeyReleased(KEY_ENTER) && !newHighScore)
 		{
 			Continue();
@@ -222,6 +199,9 @@ void Game::RenderUI() noexcept
 
 void Game::Render()
 {
+	BeginDrawing();
+	ClearBackground(BLACK);
+
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
@@ -328,14 +308,16 @@ void Game::Render()
 		//SHOULD NOT HAPPEN
 		break;
 	}
+
+	EndDrawing();
 }
 
 void Game::SpawnBarriers()
 {
 	const float barrier_distance = GetScreenWidthF() / (barrierCount + 1.0f);
 	const float barrier_y_pos = GetScreenHeightF() - barrier_offset_from_screen;
+	
 	Barriers.reserve(barrierCount);
-
 	for (int i = 0; i < barrierCount; i++)
 	{
 		Vector2 spawnPos{ barrier_distance * (i + 1), barrier_y_pos };
@@ -345,21 +327,31 @@ void Game::SpawnBarriers()
 
 void Game::SpawnAliens()
 {
-	Aliens.reserve(formationHeight * formationWidth);
-	for (int row = 0; row < formationHeight; row++)
+	if (Aliens.empty())
 	{
-		for (int col = 0; col < formationWidth; col++)
+		Aliens.reserve(formationHeight * formationWidth);
+		for (int row = 0; row < formationHeight; row++)
 		{
-			const Vector2 spawnPos{ formationX + 450 + (col * alienSpacing), formationY + (row * alienSpacing) };
-			Aliens.emplace_back(spawnPos);
+			for (int col = 0; col < formationWidth; col++)
+			{
+				const Vector2 spawnPos{ formationX + 450.0f + (col * alienSpacing), formationY + (row * alienSpacing) };
+				Aliens.emplace_back(spawnPos);
+			}
 		}
 	}
+}
+
+void Game::SpawnPlayerBeams()
+{
+	const Vector2 spawnPosition{ player.position.x + player_radius / 2,player.position.y - projectile_height };
+	constexpr int speed = 15;
+	playerBeams.push_back(Projectile(spawnPosition, speed));
 }
 
 void Game::AliensShooting() //TODO: simplify?
 {
 	shootTimer += 1;
-	if (shootTimer > 59) //once per second
+	if (shootTimer > 60)
 	{
 		int randomAlienIndex = 0;
 
@@ -381,12 +373,12 @@ void Game::HandleEnemyBeamCollision() noexcept
 {
 	for (auto& enemyBeam : enemyBeams)
 	{
-		for (auto& wall : Barriers)
+		for (auto& barrier : Barriers)
 		{
-			if (CheckCollisionCircleRec(wall.position, barrier_radius, enemyBeam.rect))
+			if (CheckCollisionCircleRec(barrier.position, barrier_radius, enemyBeam.rect))
 			{
 				enemyBeam.active = false;
-				wall.health -= 1;
+				barrier.health -= 1;
 			}
 		}
 
@@ -402,12 +394,12 @@ void Game::HandlePlayerBeamCollision() noexcept
 {
 	for (auto& playerBeam : playerBeams)
 	{
-		for (auto& wall : Barriers)
+		for (auto& barrier : Barriers)
 		{
-			if (CheckCollisionCircleRec(wall.position, barrier_radius, playerBeam.rect))
+			if (CheckCollisionCircleRec(barrier.position, barrier_radius, playerBeam.rect))
 			{
 				playerBeam.active = false;
-				wall.health -= 1;
+				barrier.health -= 1;
 			}
 		}
 
@@ -423,7 +415,7 @@ void Game::HandlePlayerBeamCollision() noexcept
 	}
 }
 
-void Game::HandleAllCollisions() noexcept
+void Game::HandleAllBeamCollisions() noexcept
 {
 	HandleEnemyBeamCollision();
 

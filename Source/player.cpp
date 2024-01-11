@@ -1,15 +1,7 @@
 #include "player.h"
 
-void Player::Render(Texture2D tex) noexcept
-{
-	constexpr float offset { 50.0f };
-	//DrawTexture(tex, position.x - offset, position.y - offset, WHITE);
-	DrawTextureV(tex, {position.x - offset, position.y - offset}, WHITE);
-}
-
 void Player::Update() noexcept
 {
-	//Movement
 	direction = 0;
 	if (IsKeyDown(KEY_LEFT))
 	{
@@ -31,7 +23,6 @@ void Player::Update() noexcept
 		position.x = GetScreenWidthF() - player_radius;
 	}
 
-	//Determine frame for animation
 	timer += GetFrameTime();
 
 	if (timer > 0.4 && activeTexture == 2) // TODO: make something that handles animations separately
@@ -44,4 +35,16 @@ void Player::Update() noexcept
 		activeTexture++;
 		timer = 0;
 	}
+}
+
+void Player::Render(Texture2D tex) noexcept
+{
+	constexpr float offset{ 50.0f };
+	DrawTextureV(tex, { position.x - offset, position.y - offset }, WHITE);
+}
+
+void Player::Reset() noexcept
+{
+	lives = 3;
+	position.x = (GetScreenWidthF() / 2.0f);
 }

@@ -16,27 +16,19 @@ static inline float GetRandomValueF(int min, int max) noexcept
 
 struct Star
 {
-	int initPositionX { 0 };
 	Vector2 position { 0.0f, 0.0f };
 	float size { 0.0f };
-	void Update(float starOffset) noexcept;
-	void Render() noexcept;
+	void Render(float offset) noexcept;
 };
 
 struct Background
 {
-	explicit Background(const int starAmount);
-	Background(const Background& other) noexcept = delete;
-	Background& operator=(const Background& other) noexcept = delete;
-	Background(Background&& other) noexcept = delete;
-	Background& operator=(Background&& other) noexcept = delete;
-	~Background()
-	{
-		Stars.clear();
-	}
+	static const int starAmount { 600 };
+	float scrollingOffset{ 0.0f };
 
 	std::vector<Star> Stars;
 
+	explicit Background() noexcept;
 	void Update(float offset) noexcept;
 	void Render() noexcept;
 };

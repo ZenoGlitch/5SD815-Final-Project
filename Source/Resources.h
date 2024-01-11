@@ -51,8 +51,6 @@ struct MyTexture
 	{
 		return tex;
 	}
-
-
 };
 
 const Texture2D& getTexture(const MyTexture& t) noexcept;
@@ -64,7 +62,6 @@ public:
 	std::vector<MyTexture> shipTextures;
 
 	Resources();
-
 
 	MyTexture alienTexture = MyTexture("./Assets/Alien.png"sv);
 	MyTexture barrierTexture = MyTexture("./Assets/Barrier.png"sv);

@@ -18,8 +18,9 @@ public:
 	int lives { 3 };
 	
 	Vector2 position{ (GetScreenWidthF() / 2.0f), (GetScreenHeightF() - player_base_height) };
+	void Update() noexcept;
 	void Render(Texture2D texture) noexcept;
-	void Update() noexcept;	
+	void Reset() noexcept;
 	bool IsAlive() const noexcept { return lives < 1; };
 
 };

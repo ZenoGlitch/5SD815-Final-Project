@@ -9,8 +9,6 @@
 #include <vector>
 #include <string>
 
-
-
 enum struct State
 {
 	STARTSCREEN,
@@ -29,7 +27,7 @@ struct Game
 	// Gamestate
 	State gameState { State::STARTSCREEN };	
 	Resources resources;
-	Background background{600};
+	Background background;
 	Player player;
 	std::vector<Projectile> playerBeams;
 	std::vector<Projectile> enemyBeams;
@@ -43,7 +41,7 @@ struct Game
 
 	int score { 0 };
 
-	const int barrierCount { 5 };
+	static const int barrierCount { 5 };
 
 	float shootTimer { 0 };
 
@@ -61,12 +59,13 @@ struct Game
 
 	void SpawnBarriers();
 	void SpawnAliens();
+	void SpawnPlayerBeams();
 
 	void AliensShooting();
 
 	void HandleEnemyBeamCollision() noexcept;
 	void HandlePlayerBeamCollision() noexcept;
-	void HandleAllCollisions() noexcept;
+	void HandleAllBeamCollisions() noexcept;
 	bool CheckNewHighScore() const noexcept;
 
 	void InsertNewHighScore(std::string name);

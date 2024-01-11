@@ -1,41 +1,33 @@
 #include "background.h"
 
-void Star::Update(float starOffset) noexcept
+void Star::Render(float offset) noexcept
 {
-	position.x = initPositionX + starOffset;
+	const Vector2 offsetPos{ position.x + (offset / size) , position.y};
+	DrawCircleV(offsetPos, size, SKYBLUE);
 }
 
-void Star::Render() noexcept
-{
-	DrawCircleV(position, size, SKYBLUE);
-}
-
-Background::Background(const int starAmount)
+Background::Background() noexcept
 {
 	Stars.reserve(starAmount);
 	for (int i = 0; i < starAmount; i++)
 	{
 		constexpr int screen_offset = 150;
-		const int initPosX = GetRandomValue(-screen_offset, GetScreenWidth() + screen_offset);
-		const Vector2 pos = { initPosX, GetRandomValueF(0, GetScreenHeight()) };
+		const Vector2 pos = { GetRandomValueF(-screen_offset, GetScreenWidth() + screen_offset), GetRandomValueF(0, GetScreenHeight()) };
 		const float size = GetRandomValueF(1, 4) / 2;
 
-		Stars.emplace_back(initPosX, pos, size);
+		Stars.emplace_back(pos, size);
 	}
 }
 
 void Background::Update(float offset) noexcept
 {
-	for (auto& star : Stars)
-	{
-		star.Update(offset);
-	}
+	scrollingOffset = offset;
 }
 
 void Background::Render() noexcept
 {
 	for (auto& star : Stars)
 	{
-		star.Render();
+		star.Render(scrollingOffset);
 	}
 }

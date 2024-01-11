@@ -23,7 +23,7 @@ void Game::Start()
 
 	SpawnAliens();
 			
-	background.Initialize(600); //TODO: two step init
+	//background.Initialize(600); //TODO: two step init
 
 	score = 0;
 
@@ -345,6 +345,7 @@ void Game::SpawnBarriers()
 
 void Game::SpawnAliens()
 {
+	Aliens.reserve(formationHeight * formationWidth);
 	for (int row = 0; row < formationHeight; row++)
 	{
 		for (int col = 0; col < formationWidth; col++)
@@ -503,53 +504,4 @@ bool Game::ShouldGameEnd() noexcept
 		}
 	}
 	return false;
-}
-
-//BACKGROUND
-void Star::Update(float starOffset)
-{
-	position.x = initPosition.x + starOffset;
-	position.y = initPosition.y;
-
-}
-
-void Star::Render()
-{
-	DrawCircle((int)position.x, (int)position.y, size, color);
-}
-
-
-void Background::Initialize(int starAmount)
-{
-	for (int i = 0; i < starAmount; i++)
-	{
-		Star newStar;
-
-		newStar.initPosition.x = GetRandomValue(-150, GetScreenWidth() + 150); //TODO: Wrap GetRandomValue or do something that returns float instead, also use GetScreenWidthF instead.
-		newStar.initPosition.y = GetRandomValue(0, GetScreenHeight());
-		
-		//random color?
-		newStar.color = SKYBLUE;
-
-		newStar.size = GetRandomValue(1, 4) / 2;
-
-		Stars.push_back(newStar);
-
-	}
-}
-
-void Background::Update(float offset)
-{
-	for (int i = 0; i < Stars.size(); i++)
-	{
-		Stars[i].Update(offset);
-	}
-}
-
-void Background::Render()
-{
-	for (int i = 0; i < Stars.size(); i++)
-	{
-		Stars[i].Render();
-	}
 }

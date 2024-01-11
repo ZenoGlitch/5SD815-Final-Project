@@ -3,7 +3,8 @@
 void Player::Render(Texture2D tex) noexcept
 {
 	constexpr float offset { 50.0f };
-	DrawTexture(tex, position.x - offset, position.y - offset, WHITE);
+	//DrawTexture(tex, position.x - offset, position.y - offset, WHITE);
+	DrawTextureV(tex, {position.x - offset, position.y - offset}, WHITE);
 }
 
 void Player::Update() noexcept
@@ -33,7 +34,7 @@ void Player::Update() noexcept
 	//Determine frame for animation
 	timer += GetFrameTime();
 
-	if (timer > 0.4 && activeTexture == 2)
+	if (timer > 0.4 && activeTexture == 2) // TODO: make something that handles animations separately
 	{
 		activeTexture = 0;
 		timer = 0;

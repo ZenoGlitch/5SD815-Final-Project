@@ -5,8 +5,10 @@
 #include "projectile.h"
 #include "alien.h"
 #include "barrier.h"
+#include "background.h"
 #include <vector>
 #include <string>
+
 
 
 enum struct State
@@ -22,33 +24,12 @@ struct PlayerData
 	int score{0};
 };
 
-// TODO: Should star be part of background or should it be its own class?
-struct Star
-{
-	Vector2 initPosition = { 0, 0 };
-	Vector2 position = { 0, 0 };
-	Color color { GRAY };
-	float size { 0 };
-	void Update(float starOffset);
-	void Render();
-};
-
-// TODO: Break out Background into its own class
-struct Background
-{
-	std::vector<Star> Stars;
-
-	void Initialize(int starAmount);
-	void Update(float offset);
-	void Render();
-};
-
 struct Game
 {
 	// Gamestate
 	State gameState { State::STARTSCREEN };	
 	Resources resources;
-	Background background;
+	Background background{600};
 	Player player;
 	std::vector<Projectile> playerBeams;
 	std::vector<Projectile> enemyBeams;

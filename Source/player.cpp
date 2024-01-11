@@ -25,7 +25,7 @@ void Player::Update() noexcept
 
 	timer += GetFrameTime();
 
-	if (timer > 0.4 && activeTexture == 2) // TODO: make something that handles animations separately
+	if (timer > 0.4 && activeTexture == 2) // TODO: make class that handles animations separately
 	{
 		activeTexture = 0;
 		timer = 0;

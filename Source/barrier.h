@@ -12,6 +12,5 @@ struct Barrier
 	int health { 50 };
 
 	void Render(Texture2D texture) noexcept;
-	void Update() noexcept;
 	bool IsAlive() const noexcept;
 };

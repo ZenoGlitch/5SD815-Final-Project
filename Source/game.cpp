@@ -66,7 +66,6 @@ void Game::Update()
 
 		SpawnAliens();
 
-		cornerPos = { 0.0f, player.player_base_height };
 		offset = lineLength(player.position, cornerPos) * -1;
 		background.Update(offset / 15);
 
@@ -78,11 +77,6 @@ void Game::Update()
 		for (auto& pBeam : playerBeams)
 		{
 			pBeam.Update();
-		}
-
-		for (auto& wall : Barriers)
-		{
-			wall.Update();
 		}
 
 		HandleAllBeamCollisions();
@@ -117,10 +111,8 @@ void Game::Update()
 
 			if (mouseOnText)
 			{
-				// Set the window's cursor to the I-Beam
 				SetMouseCursor(MOUSE_CURSOR_IBEAM);
 
-				// Get char pressed on the queue
 				int key = GetCharPressed();
 
 				// Check if more characters have been pressed on the same frame
@@ -129,7 +121,7 @@ void Game::Update()
 					// NOTE: Only allow keys in range [32..125]
 					if ((key >= 32) && (key <= 125) && (letterCount < 9))
 					{
-						name[letterCount] = (char)key;
+						name[letterCount] = static_cast<char>(key);
 						name[letterCount + 1] = '\0'; // Add null terminator at the end of the string.
 						letterCount++;
 					}
@@ -197,7 +189,7 @@ void Game::RenderUI() noexcept
 	DrawText(TextFormat("Lives: %i", player.lives), linePosX, secondLinePosY, fontSize, YELLOW);
 }
 
-void Game::Render()
+void Game::Render() noexcept
 {
 	BeginDrawing();
 	ClearBackground(BLACK);
@@ -260,10 +252,12 @@ void Game::Render()
 			}
 
 			//Draw the name being typed out
-			DrawText(name, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
+			DrawText(name, static_cast<int>(textBox.x + 5), static_cast<int>(textBox.y + 8), 40, MAROON);
 
 			//Draw the text explaining how many characters are used
 			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, 20, YELLOW);
+
+			
 
 			if (mouseOnText)
 			{
@@ -272,7 +266,8 @@ void Game::Render()
 					// Draw blinking underscore char
 					if (((framesCounter / 20) % 2) == 0)
 					{
-						DrawText("_", (int)textBox.x + 8 + MeasureText(name, 40), (int)textBox.y + 12, 40, MAROON);
+						const int fontSize = 40;
+						DrawText("_", static_cast<int>(textBox.x + 8 + MeasureText(name, fontSize)), static_cast<int>(textBox.y + 12), fontSize, MAROON);
 					}
 				}
 				else
@@ -296,9 +291,9 @@ void Game::Render()
 
 			for (int i = 0; i < Leaderboard.size(); i++)
 			{
-				char* tempNameDisplay = Leaderboard[i].name.data();
+				const char* tempNameDisplay = Leaderboard.at(i).name.data(); //TODO: Don't use char*, use string_view instead. Also breaking the Law of Demeter
 				DrawText(tempNameDisplay, 50, 140 + (i * 40), 40, YELLOW);
-				DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), 40, YELLOW);
+				DrawText(TextFormat("%i", Leaderboard.at(i).score), 350, 140 + (i * 40), 40, YELLOW);
 			}
 		}
 
@@ -329,12 +324,12 @@ void Game::SpawnAliens()
 {
 	if (Aliens.empty())
 	{
-		Aliens.reserve(formationHeight * formationWidth);
+		Aliens.reserve(static_cast<int>(formationHeight * formationWidth));
 		for (int row = 0; row < formationHeight; row++)
 		{
 			for (int col = 0; col < formationWidth; col++)
 			{
-				const Vector2 spawnPos{ formationX + 450.0f + (col * alienSpacing), formationY + (row * alienSpacing) };
+				const Vector2 spawnPos{ formationX + (col * alienSpacing), formationY + (row * alienSpacing) };
 				Aliens.emplace_back(spawnPos);
 			}
 		}
@@ -351,17 +346,11 @@ void Game::SpawnPlayerBeams()
 void Game::AliensShooting() //TODO: simplify?
 {
 	shootTimer += 1;
-	if (shootTimer > 60)
+	if (shootTimer > 60 && !Aliens.empty())
 	{
-		int randomAlienIndex = 0;
+		const int randomAlienIndex = std::rand() % Aliens.size(); //TODO: Seed random
 
-		if (Aliens.size() > 1)
-		{
-			randomAlienIndex = std::rand() % Aliens.size();
-		}
-
-		Vector2 spawnPosition = Aliens[randomAlienIndex].position;
-		spawnPosition.y += 40;
+		Vector2 spawnPosition = Aliens.at(randomAlienIndex).position; //TODO: Breaking the Law of Demeter
 		constexpr int speed = -15;
 
 		enemyBeams.emplace_back(spawnPosition, speed);
@@ -435,8 +424,8 @@ void Game::InsertNewHighScore(std::string p_name) // future problems
 
 	for (int i = 0; i < Leaderboard.size(); i++)
 	{
-		if (newData.score > Leaderboard[i].score)
-		{
+		if (newData.score > Leaderboard.at(i).score) //TODO: Could we use find_if and swap instead?
+		{ 
 			Leaderboard.insert(Leaderboard.begin() + i, newData);
 
 			Leaderboard.pop_back();
@@ -446,14 +435,11 @@ void Game::InsertNewHighScore(std::string p_name) // future problems
 	}
 }
 
-void Game::SaveLeaderboard()
+void Game::SaveLeaderboard() //TODO: This is obviously not fully implemented, fix or remove..!
 {
-	// SAVE LEADERBOARD AS ARRAY
-
-	// OPEN FILE
 	std::fstream file;
 
-	file.open("Leaderboard");
+	file.open("Leaderboard"); //TODO: Add an actual file and the correct path
 
 	if (!file)
 	{
@@ -463,11 +449,6 @@ void Game::SaveLeaderboard()
 	{
 		std::cout << "file found \n";
 	}
-	// CLEAR FILE
-
-	// WRITE ARRAY DATA INTO FILE
-
-	// CLOSE FILE
 }
 
 void Game::RemoveDeadEntities() noexcept

@@ -1,10 +1,5 @@
 #include "alien.h"
 
-Alien::Alien(Vector2 p_position) noexcept : position(p_position), moveRight(true), active(true)
-{
-
-}
-
 void Alien::Update() noexcept
 {
 	if (moveRight)

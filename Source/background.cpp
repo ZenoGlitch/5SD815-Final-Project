@@ -24,7 +24,7 @@ void Background::Update(float offset) noexcept
 	scrollingOffset = offset;
 }
 
-void Background::Render() noexcept
+const void Background::Render() noexcept
 {
 	for (auto& star : Stars)
 	{

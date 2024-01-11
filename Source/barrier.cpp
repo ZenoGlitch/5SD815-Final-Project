@@ -1,6 +1,6 @@
 #include "barrier.h"
 
-void Barrier::Render(Texture2D texture) noexcept
+const void Barrier::Render(Texture2D texture) noexcept
 {
 	constexpr float texture_offset = 100.0f;
 	DrawTexture(texture, position.x - texture_offset, position.y - texture_offset, WHITE);

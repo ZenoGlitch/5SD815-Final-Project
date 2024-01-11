@@ -52,9 +52,9 @@ struct Game
 	void Continue();
 
 	void Update();
-	void RenderStartScreen() noexcept;
-	void RenderUI() noexcept;
-	void Render() noexcept;
+	const void RenderStartScreen() noexcept;
+	const void RenderUI() noexcept;
+	const void Render() noexcept;
 
 	void SpawnBarriers();
 	void SpawnAliens();
@@ -75,7 +75,7 @@ struct Game
 
 	bool ShouldGameEnd() noexcept;
 	
-	//TODO: Create a separate class for Leaderboard
+	//TODO: 
 	//TODO: use string and/or string_view to handle text
 	char name[9 + 1] = "\0";      //One extra space required for null terminator char '\0'
 	int letterCount = 0;

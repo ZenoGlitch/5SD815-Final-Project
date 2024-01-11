@@ -9,7 +9,7 @@ Projectile::Projectile(Vector2 p_position, int p_speed) noexcept
 {
 }
 
-void Projectile::Render(Texture2D p_texture) noexcept
+const void Projectile::Render(Texture2D p_texture) noexcept
 {
 	constexpr float offset = 25.0f;
 	DrawTexture(p_texture, position.x - offset, position.y - offset, WHITE);

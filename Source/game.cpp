@@ -167,7 +167,7 @@ void Game::Update()
 	}
 }
 
-void Game::RenderStartScreen() noexcept
+const void Game::RenderStartScreen() noexcept
 {
 	constexpr int posX { 200 };
 	constexpr int titlePosY { 100 };
@@ -179,7 +179,7 @@ void Game::RenderStartScreen() noexcept
 	DrawText("PRESS SPACE TO BEGIN", posX, promptPosY, promptFontSize, YELLOW);
 }
 
-void Game::RenderUI() noexcept
+const void Game::RenderUI() noexcept
 {
 	constexpr int fontSize { 40 };
 	constexpr int linePosX { 50 };
@@ -189,7 +189,7 @@ void Game::RenderUI() noexcept
 	DrawText(TextFormat("Lives: %i", player.lives), linePosX, secondLinePosY, fontSize, YELLOW);
 }
 
-void Game::Render() noexcept
+const void Game::Render() noexcept
 {
 	BeginDrawing();
 	ClearBackground(BLACK);

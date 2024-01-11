@@ -30,5 +30,5 @@ struct Background
 
 	explicit Background() noexcept;
 	void Update(float offset) noexcept;
-	void Render() noexcept;
+	const void Render() noexcept;
 };

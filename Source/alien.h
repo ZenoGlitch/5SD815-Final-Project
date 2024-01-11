@@ -20,7 +20,7 @@ public:
 	bool moveRight { true };
 
 	void Update() noexcept;
-	void Render(Texture2D texture) noexcept;
+	const void Render(Texture2D texture) noexcept;
 	bool IsAlive() const noexcept { return active; };
 };
 

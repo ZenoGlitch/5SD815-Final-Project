@@ -19,7 +19,7 @@ public:
 	
 	Vector2 position{ (GetScreenWidthF() / 2.0f), (GetScreenHeightF() - player_base_height) };
 	void Update() noexcept;
-	void Render(Texture2D texture) noexcept;
+	const void Render(Texture2D texture) noexcept;
 	void Reset() noexcept;
 	bool IsAlive() const noexcept { return lives < 1; };
 

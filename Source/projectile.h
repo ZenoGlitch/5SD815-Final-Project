@@ -7,7 +7,6 @@ constexpr static int projectile_height { 50 };
 
 class Projectile
 {
-	Vector2 position = { 0, 0 };
 	int speed { 15 };
 
 public:

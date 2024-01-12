@@ -1,4 +1,5 @@
 #include "game.h"
+#include "utils.h"
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -8,11 +9,6 @@
 static bool is_dead(const auto& entity) noexcept 
 {
 	return !entity.IsAlive();
-}
-
-static float lineLength(Vector2 A, Vector2 B) noexcept //Uses pythagoras to calculate the length of a line
-{
-	return std::sqrtf(std::powf(B.x - A.x, 2) + std::powf(B.y - A.y, 2));
 }
 
 void Game::Start()
@@ -66,8 +62,8 @@ void Game::Update()
 
 		SpawnAliens();
 
-		offset = lineLength(player.position, cornerPos) * -1;
-		background.Update(offset / 15);
+		offset = (Vector2Distance(player.position, cornerPos) * -1) / 15;
+		background.Update(offset);
 
 		for (auto& eBeam : enemyBeams)
 		{
@@ -121,7 +117,11 @@ void Game::Update()
 					// NOTE: Only allow keys in range [32..125]
 					if ((key >= 32) && (key <= 125) && (letterCount < 9))
 					{
-						name[letterCount] = static_cast<char>(key); // TODO: remove the need for casting and remove the need for indexing into arr
+						[[gsl::suppress(bounds.4)]]
+						[[gsl::suppress(bounds.2)]]
+						name[letterCount] = narrow_cast<char>(key); // TODO: remove the need for casting and remove the need for indexing into arr
+						[[gsl::suppress(bounds.4)]]
+						[[gsl::suppress(bounds.2)]]
 						name[letterCount + 1] = '\0'; // Add null terminator at the end of the string.
 						letterCount++;
 					}
@@ -134,6 +134,8 @@ void Game::Update()
 				{
 					letterCount--;
 					if (letterCount < 0) letterCount = 0;
+					[[gsl::suppress(bounds.4)]]
+					[[gsl::suppress(bounds.2)]]
 					name[letterCount] = '\0';
 				}
 			}
@@ -152,6 +154,7 @@ void Game::Update()
 			// name + score to scoreboard
 			if (letterCount > 0 && letterCount < 9 && IsKeyReleased(KEY_ENTER))
 			{
+				[[gsl::suppress(bounds.3)]]
 				std::string nameEntry(name);
 
 				InsertNewHighScore(nameEntry);
@@ -163,6 +166,7 @@ void Game::Update()
 		break;
 	default:
 		//SHOULD NOT HAPPEN
+		throw std::runtime_error("Unexpected error occured in game.Update()");
 		break;
 	}
 }
@@ -207,7 +211,9 @@ const void Game::Render() const noexcept
 
 		RenderUI();
 
-		player.Render(resources.shipTextures[player.activeTexture].get()); // TODO: Try to fix this, doesn't look great
+		[[gsl::suppress(bounds.4)]]
+		[[gsl::suppress(bounds.2)]]
+		player.Render(resources.shipTextures[player.activeTexture].get()); // TODO: Try to fix this, doesn't look great, breaking the law of Demeter(?)
 
 		for (auto& eBeam : enemyBeams)
 		{
@@ -251,6 +257,7 @@ const void Game::Render() const noexcept
 			}
 
 			//Draw the name being typed out
+			[[gsl::suppress(bounds.3)]]
 			DrawText(name, static_cast<int>(textBox.x + 5), static_cast<int>(textBox.y + 8), 40, MAROON); //TODO: consider using a font and another version of the DrawText function like DrawTextEx or DrawTextPro, get rid of magic values
 
 			//Draw the text explaining how many characters are used
@@ -266,6 +273,7 @@ const void Game::Render() const noexcept
 					if (((framesCounter / 20) % 2) == 0)
 					{
 						constexpr int fontSize = 40;
+						[[gsl::suppress(bounds.3)]]
 						DrawText("_", static_cast<int>(textBox.x + 8 + MeasureText(name, fontSize)), static_cast<int>(textBox.y + 12), fontSize, MAROON);
 					}
 				}

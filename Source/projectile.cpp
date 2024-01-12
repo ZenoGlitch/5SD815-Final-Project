@@ -2,8 +2,7 @@
 #include "Resources.h"
 
 Projectile::Projectile(Vector2 p_position, int p_speed) noexcept
-	: position(p_position)
-	, speed(p_speed)
+	: speed(p_speed)
 	, rect(Rectangle(p_position.x, p_position.y, projectile_width, projectile_height))
 	, active(true)
 {
@@ -12,17 +11,14 @@ Projectile::Projectile(Vector2 p_position, int p_speed) noexcept
 const void Projectile::Render(Texture2D p_texture) const noexcept
 {
 	constexpr float offset = 25.0f;
-	DrawTextureV(p_texture, { position.x - offset, position.y - offset }, WHITE);
+	DrawTextureV(p_texture, { rect.x - offset, rect.y - offset }, WHITE);
 }
 
 void Projectile::Update() noexcept
 {
-	position.y -= speed;
+	rect.y -= speed;
 
-	rect.x = position.x;
-	rect.y = position.y;
-
-	if (position.y < 0 || position.y > GetScreenHeightF() + projectile_height)
+	if (rect.y < 0 || rect.y > GetScreenHeightF() + projectile_height)
 	{
 		active = false;
 	}

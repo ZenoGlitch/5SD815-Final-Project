@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include "raymath.h"
 #include "Resources.h"
 #include "player.h"
 #include "projectile.h"

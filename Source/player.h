@@ -19,8 +19,8 @@ public:
 	
 	Vector2 position{ (GetScreenWidthF() / 2.0f), (GetScreenHeightF() - player_base_height) };
 	void Update() noexcept;
-	const void Render(Texture2D texture) const noexcept;
-	void Reset() noexcept;
+	void Render(Texture2D texture) const noexcept;
+	void Reset() noexcept; // TODO: This is a band-aid solution to making sure the player resets, this could be handled with a constructor if nothing else.
 	bool IsAlive() const noexcept { return lives < 1; };
 
 };

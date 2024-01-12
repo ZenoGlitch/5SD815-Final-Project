@@ -184,6 +184,7 @@
     <ClInclude Include="Source\player.h" />
     <ClInclude Include="Source\projectile.h" />
     <ClInclude Include="Source\Resources.h" />
+    <ClInclude Include="Source\utils.h" />
     <ClInclude Include="Source\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -118,11 +118,10 @@ void Game::Update()
 				// Check if more characters have been pressed on the same frame
 				while (key > 0)
 				{
-					
 					// NOTE: Only allow keys in range [32..125]
 					if ((key >= 32) && (key <= 125) && (letterCount < 9))
 					{
-						name[letterCount] = static_cast<char>(key); // TODO: remove the need for casting and remove the need for indexexing into arr
+						name[letterCount] = static_cast<char>(key); // TODO: remove the need for casting and remove the need for indexing into arr
 						name[letterCount + 1] = '\0'; // Add null terminator at the end of the string.
 						letterCount++;
 					}

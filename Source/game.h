@@ -75,7 +75,7 @@ struct Game
 
 	bool ShouldGameEnd() const noexcept;
 	
-	//TODO: 
+	//TODO: Make a separate class for Leaderboard
 	//TODO: use string and/or string_view to handle text
 	char name[9 + 1] = "\0";      //One extra space required for null terminator char '\0'
 	int letterCount = 0;

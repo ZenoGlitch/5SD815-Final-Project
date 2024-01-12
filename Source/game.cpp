@@ -118,14 +118,15 @@ void Game::Update()
 				// Check if more characters have been pressed on the same frame
 				while (key > 0)
 				{
+					
 					// NOTE: Only allow keys in range [32..125]
 					if ((key >= 32) && (key <= 125) && (letterCount < 9))
 					{
-						name[letterCount] = static_cast<char>(key);
+						name[letterCount] = static_cast<char>(key); // TODO: remove the need for casting and remove the need for indexexing into arr
 						name[letterCount + 1] = '\0'; // Add null terminator at the end of the string.
 						letterCount++;
 					}
-
+					
 					key = GetCharPressed();  // Check next character in the queue
 				}
 
@@ -207,7 +208,7 @@ const void Game::Render() const noexcept
 
 		RenderUI();
 
-		player.Render(resources.shipTextures[player.activeTexture].get());
+		player.Render(resources.shipTextures[player.activeTexture].get()); // TODO: Try to fix this, doesn't look great
 
 		for (auto& eBeam : enemyBeams)
 		{
@@ -243,7 +244,6 @@ const void Game::Render() const noexcept
 			DrawRectangleRec(textBox, LIGHTGRAY);
 			if (mouseOnText)
 			{
-				// HOVER CONFIRMIATION
 				DrawRectangleLinesEx(textBox, 1.0f, RED);
 			}
 			else
@@ -252,7 +252,7 @@ const void Game::Render() const noexcept
 			}
 
 			//Draw the name being typed out
-			DrawText(name, static_cast<int>(textBox.x + 5), static_cast<int>(textBox.y + 8), 40, MAROON);
+			DrawText(name, static_cast<int>(textBox.x + 5), static_cast<int>(textBox.y + 8), 40, MAROON); //TODO: consider using a font and another version of the DrawText function like DrawTextEx or DrawTextPro, get rid of magic values
 
 			//Draw the text explaining how many characters are used
 			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, 20, YELLOW);
@@ -266,7 +266,7 @@ const void Game::Render() const noexcept
 					// Draw blinking underscore char
 					if (((framesCounter / 20) % 2) == 0)
 					{
-						const int fontSize = 40;
+						constexpr int fontSize = 40;
 						DrawText("_", static_cast<int>(textBox.x + 8 + MeasureText(name, fontSize)), static_cast<int>(textBox.y + 12), fontSize, MAROON);
 					}
 				}
@@ -291,7 +291,7 @@ const void Game::Render() const noexcept
 
 			for (int i = 0; i < Leaderboard.size(); i++)
 			{
-				const char* tempNameDisplay = Leaderboard.at(i).name.data(); //TODO: Don't use char*, use string_view instead. Also breaking the Law of Demeter
+				const char* tempNameDisplay = Leaderboard.at(i).name.data(); //TODO: Don't use char*, use string or string_view instead. Also breaking the Law of Demeter
 				DrawText(tempNameDisplay, 50, 140 + (i * 40), 40, YELLOW);
 				DrawText(TextFormat("%i", Leaderboard.at(i).score), 350, 140 + (i * 40), 40, YELLOW);
 			}
@@ -416,9 +416,9 @@ bool Game::CheckNewHighScore() const noexcept
 	return (score > Leaderboard.back().score);
 }
 
-void Game::InsertNewHighScore(std::string p_name) // future problems
+void Game::InsertNewHighScore(std::string p_name) // TODO: refactor this
 {
-	PlayerData newData;
+	PlayerData newData; // TODO: Two-step init, also just remove
 	newData.name = p_name;
 	newData.score = score;
 
@@ -459,7 +459,7 @@ void Game::RemoveDeadEntities() noexcept
 	std::erase_if(Barriers, is_dead<Barrier>);
 }
 
-bool Game::ShouldGameEnd() noexcept
+bool Game::ShouldGameEnd() const noexcept
 {
 	if (IsKeyReleased(KEY_Q))
 	{

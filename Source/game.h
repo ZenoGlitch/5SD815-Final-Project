@@ -73,7 +73,7 @@ struct Game
 
 	void RemoveDeadEntities() noexcept;
 
-	bool ShouldGameEnd() noexcept;
+	bool ShouldGameEnd() const noexcept;
 	
 	//TODO: 
 	//TODO: use string and/or string_view to handle text

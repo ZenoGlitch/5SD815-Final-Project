@@ -1,6 +1,6 @@
 #include "background.h"
 
-void Star::Render(float offset) noexcept
+const void Star::Render(float offset) const noexcept
 {
 	const Vector2 offsetPos{ position.x + (offset / size) , position.y};
 	DrawCircleV(offsetPos, size, SKYBLUE);
@@ -24,7 +24,7 @@ void Background::Update(float offset) noexcept
 	scrollingOffset = offset;
 }
 
-const void Background::Render() noexcept
+const void Background::Render() const noexcept
 {
 	for (auto& star : Stars)
 	{

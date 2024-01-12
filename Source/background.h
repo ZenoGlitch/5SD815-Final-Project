@@ -18,7 +18,7 @@ struct Star
 {
 	Vector2 position { 0.0f, 0.0f };
 	float size { 0.0f };
-	void Render(float offset) noexcept;
+	const void Render(float offset) const noexcept;
 };
 
 struct Background
@@ -30,5 +30,5 @@ struct Background
 
 	explicit Background() noexcept;
 	void Update(float offset) noexcept;
-	const void Render() noexcept;
+	const void Render() const noexcept;
 };

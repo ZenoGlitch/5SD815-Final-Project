@@ -24,7 +24,7 @@ void Alien::Update() noexcept
 	}
 }
 
-const void Alien::Render(Texture2D texture) noexcept
+const void Alien::Render(Texture2D texture) const noexcept
 {
 	DrawTexture(texture, position.x - alien_radius, position.y - alien_radius, WHITE);
 }

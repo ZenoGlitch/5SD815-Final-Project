@@ -37,7 +37,7 @@ void Player::Update() noexcept
 	}
 }
 
-const void Player::Render(Texture2D tex) noexcept
+const void Player::Render(Texture2D tex) const noexcept
 {
 	constexpr float offset{ 50.0f };
 	DrawTextureV(tex, { position.x - offset, position.y - offset }, WHITE);

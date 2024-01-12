@@ -52,9 +52,9 @@ struct Game
 	void Continue();
 
 	void Update();
-	const void RenderStartScreen() noexcept;
-	const void RenderUI() noexcept;
-	const void Render() noexcept;
+	const void RenderStartScreen() const noexcept;
+	const void RenderUI() const noexcept;
+	const void Render() const noexcept;
 
 	void SpawnBarriers();
 	void SpawnAliens();
